@@ -1,5 +1,7 @@
 package com.allsouls.newsapp.feed.data.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 data class FeedResponse(
-    val headlines: List<HeadlineDto>
+    @JsonProperty("headlines") val headlines: List<HeadlineDto>
 )
