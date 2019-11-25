@@ -27,6 +27,10 @@ android {
         }
     }
 
+    androidExtensions {
+        experimental = true
+    }
+
     kotlinOptions {
         freeCompilerArgs = ["-Xallow-result-return-type", "-Xuse-experimental=kotlin.Experimental"]
     }
