@@ -1,4 +1,4 @@
-package com.allsouls.newsapp.feed.data.dto
+package com.allsouls.newsapp.headline.data.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

@@ -5,7 +5,7 @@ import com.allsouls.newsapp.arch.presentation.Dispatchers
 import com.allsouls.newsapp.arch.presentation.Presenter
 import com.allsouls.newsapp.feed.domain.FetchFeed
 import com.allsouls.newsapp.feed.domain.entity.Feed
-import com.allsouls.newsapp.feed.domain.entity.Headline
+import com.allsouls.newsapp.headline.domain.entity.Headline
 
 class FeedPresenter(
     private val fetchFeed: FetchFeed,

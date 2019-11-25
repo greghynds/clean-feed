@@ -1,4 +1,4 @@
-package com.allsouls.newsapp.feed.ui
+package com.allsouls.newsapp.arch.presentation
 
 import android.annotation.SuppressLint
 import java.text.SimpleDateFormat

@@ -4,7 +4,7 @@ import com.allsouls.newsapp.arch.data.ApiError
 import com.allsouls.newsapp.arch.domain.Params
 import com.allsouls.newsapp.feed.domain.FetchFeed
 import com.allsouls.newsapp.feed.domain.entity.Feed
-import com.allsouls.newsapp.feed.domain.entity.Headline
+import com.allsouls.newsapp.headline.domain.entity.Headline
 import com.allsouls.newsapp.util.TestDispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
@@ -30,7 +30,8 @@ class FeedPresenterTest {
             val updateDateTs = 1448401928L
             val updateDate = Date(updateDateTs)
             val introduction = "introduction"
-            val headline = Headline(text, updateDate, introduction)
+            val headline =
+                Headline(text, updateDate, introduction)
             val feed = Feed(listOf(headline))
             val sut = createPresenter()
             given(fetchFeed.execute(Params.None)).willReturn(success(feed))
@@ -57,7 +58,11 @@ class FeedPresenterTest {
     @Test
     fun `navigates to detail view when headline selected`() {
         runBlocking {
-            val headline = Headline("title", Date(), "introduction")
+            val headline = Headline(
+                "title",
+                Date(),
+                "introduction"
+            )
             val sut = createPresenter()
 
             sut.selectHeadline(headline)

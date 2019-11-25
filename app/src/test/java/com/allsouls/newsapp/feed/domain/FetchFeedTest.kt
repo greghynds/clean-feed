@@ -2,7 +2,7 @@ package com.allsouls.newsapp.feed.domain
 
 import com.allsouls.newsapp.arch.domain.Params
 import com.allsouls.newsapp.feed.domain.entity.Feed
-import com.allsouls.newsapp.feed.domain.entity.Headline
+import com.allsouls.newsapp.headline.domain.entity.Headline
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

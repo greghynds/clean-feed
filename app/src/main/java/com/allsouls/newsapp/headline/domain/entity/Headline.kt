@@ -1,4 +1,4 @@
-package com.allsouls.newsapp.feed.domain.entity
+package com.allsouls.newsapp.headline.domain.entity
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

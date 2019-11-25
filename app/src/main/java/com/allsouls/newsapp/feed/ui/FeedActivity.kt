@@ -7,9 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsouls.newsapp.R
 import com.allsouls.newsapp.feed.domain.entity.Feed
-import com.allsouls.newsapp.feed.domain.entity.Headline
+import com.allsouls.newsapp.headline.domain.entity.Headline
 import com.allsouls.newsapp.feed.presentation.FeedPresenter
 import com.allsouls.newsapp.feed.presentation.FeedView
+import com.allsouls.newsapp.feed.ui.adapter.HeadlinesAdapter
+import com.allsouls.newsapp.headline.ui.HeadlineActivity
 import kotlinx.android.synthetic.main.activity_feed.*
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf

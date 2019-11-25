@@ -1,18 +1,21 @@
-package com.allsouls.newsapp.feed.ui
+package com.allsouls.newsapp.feed.ui.view
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.allsouls.newsapp.R
-import com.allsouls.newsapp.feed.domain.entity.Headline
+import com.allsouls.newsapp.headline.domain.entity.Headline
+import com.allsouls.newsapp.headline.presentation.HeadlineCardPresenter
+import com.allsouls.newsapp.headline.presentation.HeadlineCardView
 import kotlinx.android.synthetic.main.layout_headline_card.view.*
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import org.koin.core.parameter.parametersOf
 
 
-class HeadlineCard : FrameLayout, KoinComponent, HeadlineCardView {
+class HeadlineCard : FrameLayout, KoinComponent,
+    HeadlineCardView {
 
     private val presenter: HeadlineCardPresenter by inject { parametersOf(this) }
 

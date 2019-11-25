@@ -1,7 +1,7 @@
 package com.allsouls.newsapp.feed.presentation
 
 import com.allsouls.newsapp.feed.domain.entity.Feed
-import com.allsouls.newsapp.feed.domain.entity.Headline
+import com.allsouls.newsapp.headline.domain.entity.Headline
 
 interface FeedView {
     fun showLoading()

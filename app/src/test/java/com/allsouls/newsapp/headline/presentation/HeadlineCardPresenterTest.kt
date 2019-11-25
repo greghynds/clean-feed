@@ -1,12 +1,14 @@
-package com.allsouls.newsapp.feed.ui
+package com.allsouls.newsapp.headline.presentation
 
-import com.allsouls.newsapp.feed.domain.entity.Headline
+import com.allsouls.newsapp.headline.domain.entity.Headline
+import com.allsouls.newsapp.headline.presentation.HeadlineCardPresenter
+import com.allsouls.newsapp.headline.presentation.HeadlineCardView
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
-import java.util.Date
+import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class HeadlineCardPresenterTest {

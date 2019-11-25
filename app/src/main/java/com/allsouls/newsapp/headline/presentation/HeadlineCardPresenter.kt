@@ -1,6 +1,7 @@
-package com.allsouls.newsapp.feed.ui
+package com.allsouls.newsapp.headline.presentation
 
-import com.allsouls.newsapp.feed.domain.entity.Headline
+import com.allsouls.newsapp.arch.presentation.formatDate
+import com.allsouls.newsapp.headline.domain.entity.Headline
 
 class HeadlineCardPresenter(private val view: HeadlineCardView) {
 

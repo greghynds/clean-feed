@@ -1,16 +1,19 @@
-package com.allsouls.newsapp.feed.ui
+package com.allsouls.newsapp.headline.ui
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.allsouls.newsapp.R
-import com.allsouls.newsapp.feed.domain.entity.Headline
+import com.allsouls.newsapp.headline.domain.entity.Headline
+import com.allsouls.newsapp.headline.presentation.HeadlinePresenter
+import com.allsouls.newsapp.headline.presentation.HeadlineView
 import kotlinx.android.synthetic.main.activity_headline.*
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
 
-class HeadlineActivity : AppCompatActivity(), HeadlineView {
+class HeadlineActivity : AppCompatActivity(),
+    HeadlineView {
 
     private val presenter: HeadlinePresenter by inject { parametersOf(this) }
 

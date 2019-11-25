@@ -1,6 +1,8 @@
-package com.allsouls.newsapp.feed.ui
+package com.allsouls.newsapp.headline.presentation
 
-import com.allsouls.newsapp.feed.domain.entity.Headline
+import com.allsouls.newsapp.headline.domain.entity.Headline
+import com.allsouls.newsapp.headline.presentation.HeadlinePresenter
+import com.allsouls.newsapp.headline.presentation.HeadlineView
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock

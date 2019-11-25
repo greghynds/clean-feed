@@ -1,4 +1,4 @@
-package com.allsouls.newsapp.feed.ui
+package com.allsouls.newsapp.headline.presentation
 
 interface HeadlineCardView {
     fun setTitle(title: String)
