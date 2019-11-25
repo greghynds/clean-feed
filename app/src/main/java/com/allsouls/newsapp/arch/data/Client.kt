@@ -1,27 +1,31 @@
 package com.allsouls.newsapp.arch.data
 
+import com.allsouls.newsapp.tracking.data.TrackingInterceptor
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 
 data class ClientConfig(
     val host: String,
     val mapper: ObjectMapper,
-    val interceptors: List<Interceptor>
+    val loggingEnabled: Boolean = false,
+    val trackingEnabled: Boolean = true
 )
 
 inline fun <reified Client> createApiClient(config: ClientConfig): Client {
-    val client = OkHttpClient()
-        .newBuilder()
-        .apply {
-            config.interceptors.forEach { interceptor ->
-                addInterceptor(interceptor)
-            }
-        }
-        .build()
+    val logging by lazy { HttpLoggingInterceptor().apply { level = BODY } }
+
+    val client = with(config) {
+        OkHttpClient()
+            .newBuilder()
+            .applyWhen(trackingEnabled) { addInterceptor(TrackingInterceptor()) }
+            .applyWhen(loggingEnabled) { addInterceptor(logging) }
+            .build()
+    }
 
     return Retrofit.Builder()
         .baseUrl(config.host)
@@ -30,4 +34,8 @@ inline fun <reified Client> createApiClient(config: ClientConfig): Client {
         .addConverterFactory(JacksonConverterFactory.create(config.mapper))
         .build()
         .create(Client::class.java)
+}
+
+inline fun <T> T.applyWhen(condition: Boolean, block: T.() -> Unit): T {
+    return if (condition) apply(block) else this
 }
