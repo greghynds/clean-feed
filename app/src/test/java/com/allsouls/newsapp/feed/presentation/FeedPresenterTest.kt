@@ -55,6 +55,18 @@ class FeedPresenterTest {
     }
 
     @Test
+    fun `navigates to detail view when headline selected`() {
+        runBlocking {
+            val headline = Headline("title", Date(), "introduction")
+            val sut = createPresenter()
+
+            sut.selectHeadline(headline)
+
+            verify(view).showDetail(headline)
+        }
+    }
+
+    @Test
     fun `shows loading indicator when fetching feed`() {
         runBlocking {
             val sut = createPresenter()

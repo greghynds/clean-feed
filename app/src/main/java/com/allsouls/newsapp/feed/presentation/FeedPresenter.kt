@@ -5,6 +5,7 @@ import com.allsouls.newsapp.arch.presentation.Dispatchers
 import com.allsouls.newsapp.arch.presentation.Presenter
 import com.allsouls.newsapp.feed.domain.FetchFeed
 import com.allsouls.newsapp.feed.domain.entity.Feed
+import com.allsouls.newsapp.feed.domain.entity.Headline
 
 class FeedPresenter(
     private val fetchFeed: FetchFeed,
@@ -17,6 +18,10 @@ class FeedPresenter(
 
         io { fetchFeed.execute(Params.None) }
             .fold(::fetchFeedSuccess, ::fetchFeedFailure)
+    }
+
+    fun selectHeadline(headline: Headline) {
+        view.showDetail(headline)
     }
 
     private fun fetchFeedSuccess(feed: Feed) {

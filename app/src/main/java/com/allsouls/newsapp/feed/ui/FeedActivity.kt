@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsouls.newsapp.R
 import com.allsouls.newsapp.feed.domain.entity.Feed
+import com.allsouls.newsapp.feed.domain.entity.Headline
 import com.allsouls.newsapp.feed.presentation.FeedPresenter
 import com.allsouls.newsapp.feed.presentation.FeedView
 import kotlinx.android.synthetic.main.activity_feed.*
@@ -49,6 +50,10 @@ class FeedActivity : AppCompatActivity(), FeedView {
         Toast.makeText(this, "Couldn't load feed.", Toast.LENGTH_SHORT).show()
     }
 
+    override fun showDetail(headline: Headline) {
+        startActivity(HeadlineActivity.intent(this, headline))
+    }
+
     private fun bindActions() {
         swipeToRefresh.apply {
             setOnRefreshListener {
@@ -61,7 +66,7 @@ class FeedActivity : AppCompatActivity(), FeedView {
     private fun createAdapter(feed: Feed): HeadlinesAdapter {
         return HeadlinesAdapter(
             feed.headlines,
-            onItemClick = { /* no op */ }
+            onItemClick = { headline -> presenter.selectHeadline(headline) }
         )
     }
 }
