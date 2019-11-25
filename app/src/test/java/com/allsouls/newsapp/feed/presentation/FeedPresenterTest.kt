@@ -54,6 +54,17 @@ class FeedPresenterTest {
         }
     }
 
+    @Test
+    fun `shows loading indicator when fetching feed`() {
+        runBlocking {
+            val sut = createPresenter()
+
+            sut.load()
+
+            verify(view).showLoading()
+        }
+    }
+
     private fun createPresenter(): FeedPresenter {
         return FeedPresenter(
             fetchFeed,

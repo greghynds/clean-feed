@@ -1,6 +1,7 @@
 package com.allsouls.newsapp.feed.ui
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,7 +31,14 @@ class FeedActivity : AppCompatActivity(), FeedView {
         super.onDestroy()
     }
 
+    override fun showLoading() {
+        headlinesProgress.visibility = View.VISIBLE
+        headlinesList.visibility = View.GONE
+    }
+
     override fun showFeed(feed: Feed) {
+        headlinesList.visibility = View.VISIBLE
+        headlinesProgress.visibility = View.GONE
         adapter = createAdapter(feed)
         headlinesList.adapter = adapter
         headlinesList.layoutManager = LinearLayoutManager(this)

@@ -13,6 +13,8 @@ class FeedPresenter(
 ) : Presenter(dispatchers) {
 
     fun load() = main {
+        view.showLoading()
+
         io { fetchFeed.execute(Params.None) }
             .fold(::fetchFeedSuccess, ::fetchFeedFailure)
     }
