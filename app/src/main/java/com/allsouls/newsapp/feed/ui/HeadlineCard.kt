@@ -44,6 +44,10 @@ class HeadlineCard : FrameLayout, KoinComponent, HeadlineCardView {
         dateText.text = date
     }
 
+    override fun setOnClickListener(listener: OnClickListener?) {
+        headlineCardRoot.setOnClickListener(listener)
+    }
+
     private fun initialise() {
         inflate()
         onFinishInflate()
