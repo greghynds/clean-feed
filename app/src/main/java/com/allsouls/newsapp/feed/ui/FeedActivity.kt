@@ -23,6 +23,7 @@ class FeedActivity : AppCompatActivity(), FeedView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed)
 
+        bindActions()
         presenter.load()
     }
 
@@ -46,6 +47,15 @@ class FeedActivity : AppCompatActivity(), FeedView {
 
     override fun showError(error: Throwable) {
         Toast.makeText(this, "Couldn't load feed.", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun bindActions() {
+        swipeToRefresh.apply {
+            setOnRefreshListener {
+                presenter.load()
+                isRefreshing = false
+            }
+        }
     }
 
     private fun createAdapter(feed: Feed): HeadlinesAdapter {
