@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?selectableItemBackground"
+    android:orientation="vertical"
+    android:padding="24dp"
+    tools:context=".feed.ui.FeedActivity">
+
+    <TextView
+        android:id="@+id/headlineTitleText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        tools:text="Something exciting is happening!" />
+
+    <TextView
+        android:id="@+id/headlineDateText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#3d3d3d"
+        tools:text="25 November, 2019" />
+
+    <TextView
+        android:id="@+id/headlineIntroductionText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textColor="#3d3d3d"
+        tools:text="Scientists have found evidence that one of the world's rarest sharks is alive and well, living off the Welsh coast." />
+</LinearLayout>
