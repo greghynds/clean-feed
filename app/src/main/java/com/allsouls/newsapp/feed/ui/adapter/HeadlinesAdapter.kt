@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.recyclerview.widget.RecyclerView
-import com.allsouls.newsapp.headline.domain.entity.Headline
 import com.allsouls.newsapp.feed.ui.view.HeadlineCard
+import com.allsouls.newsapp.headline.domain.entity.Headline
 import org.koin.core.KoinComponent
 
 class HeadlinesAdapter(
@@ -15,11 +15,7 @@ class HeadlinesAdapter(
 ) : RecyclerView.Adapter<HeadlinesAdapter.ViewHolder>(), KoinComponent {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(
-            createHeadlineCard(
-                parent.context
-            )
-        )
+        return ViewHolder(createHeadlineCard(parent.context))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

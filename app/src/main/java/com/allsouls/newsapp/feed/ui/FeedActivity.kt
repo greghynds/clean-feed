@@ -28,6 +28,7 @@ class FeedActivity : AppCompatActivity(), FeedView {
 
         configView()
         bindActions()
+
         presenter.load()
     }
 
@@ -44,12 +45,16 @@ class FeedActivity : AppCompatActivity(), FeedView {
     override fun showFeed(feed: Feed) {
         headlinesList.visibility = View.VISIBLE
         headlinesProgress.visibility = View.GONE
+
         adapter = createAdapter(feed)
         headlinesList.adapter = adapter
         headlinesList.layoutManager = LinearLayoutManager(this)
     }
 
     override fun showError(error: Throwable) {
+        headlinesList.visibility = View.VISIBLE
+        headlinesProgress.visibility = View.GONE
+
         Toast.makeText(this, "Couldn't load feed.", Toast.LENGTH_SHORT).show()
     }
 
