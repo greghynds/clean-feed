@@ -14,8 +14,7 @@ import org.koin.core.inject
 import org.koin.core.parameter.parametersOf
 
 
-class HeadlineCard : FrameLayout, KoinComponent,
-    HeadlineCardView {
+class HeadlineCard : FrameLayout, KoinComponent, HeadlineCardView {
 
     private val presenter: HeadlineCardPresenter by inject { parametersOf(this) }
 
