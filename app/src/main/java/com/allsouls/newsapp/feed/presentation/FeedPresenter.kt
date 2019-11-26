@@ -13,6 +13,10 @@ class FeedPresenter(
     private val view: FeedView
 ) : Presenter(dispatchers) {
 
+    override fun onCoroutineError(error: Throwable) {
+        view.showError(error)
+    }
+
     fun load() = main {
         view.showLoading()
 
