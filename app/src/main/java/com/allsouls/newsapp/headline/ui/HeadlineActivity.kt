@@ -3,6 +3,7 @@ package com.allsouls.newsapp.headline.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.allsouls.newsapp.R
 import com.allsouls.newsapp.headline.domain.entity.Headline
@@ -12,8 +13,7 @@ import kotlinx.android.synthetic.main.activity_headline.*
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
 
-class HeadlineActivity : AppCompatActivity(),
-    HeadlineView {
+class HeadlineActivity : AppCompatActivity(), HeadlineView {
 
     private val presenter: HeadlinePresenter by inject { parametersOf(this) }
 
@@ -21,8 +21,20 @@ class HeadlineActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_headline)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val headline = intent.getParcelableExtra<Headline>(KEY_HEADLINE)
         presenter.render(headline)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun setTitle(title: String) {
