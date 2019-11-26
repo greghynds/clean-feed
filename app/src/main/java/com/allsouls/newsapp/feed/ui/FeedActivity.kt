@@ -7,10 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsouls.newsapp.R
 import com.allsouls.newsapp.feed.domain.entity.Feed
-import com.allsouls.newsapp.headline.domain.entity.Headline
 import com.allsouls.newsapp.feed.presentation.FeedPresenter
 import com.allsouls.newsapp.feed.presentation.FeedView
 import com.allsouls.newsapp.feed.ui.adapter.HeadlinesAdapter
+import com.allsouls.newsapp.headline.domain.entity.Headline
 import com.allsouls.newsapp.headline.ui.HeadlineActivity
 import kotlinx.android.synthetic.main.activity_feed.*
 import org.koin.android.ext.android.inject
@@ -26,6 +26,7 @@ class FeedActivity : AppCompatActivity(), FeedView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed)
 
+        configView()
         bindActions()
         presenter.load()
     }
@@ -54,6 +55,10 @@ class FeedActivity : AppCompatActivity(), FeedView {
 
     override fun showDetail(headline: Headline) {
         startActivity(HeadlineActivity.intent(this, headline))
+    }
+
+    private fun configView() {
+        swipeToRefresh.setColorSchemeResources(R.color.colorAccent)
     }
 
     private fun bindActions() {

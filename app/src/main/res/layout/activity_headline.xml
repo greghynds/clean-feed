@@ -7,29 +7,30 @@
     android:focusable="true"
     android:foreground="?selectableItemBackground"
     android:orientation="vertical"
-    android:padding="24dp"
+    android:padding="@dimen/padding_medium"
     tools:context=".feed.ui.FeedActivity">
 
     <TextView
         android:id="@+id/headlineTitleText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:paddingBottom="@dimen/padding_small"
+        android:textAppearance="@style/TextAppearance.Headline"
         tools:text="Something exciting is happening!" />
 
     <TextView
         android:id="@+id/headlineDateText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#3d3d3d"
+        android:gravity="start"
+        android:textAppearance="@style/TextAppearance.Date"
         tools:text="25 November, 2019" />
 
     <TextView
         android:id="@+id/headlineIntroductionText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textColor="#3d3d3d"
+        android:layout_marginTop="@dimen/headline_introduction_top_margin"
+        android:textAppearance="@style/TextAppearance.Introduction"
         tools:text="Scientists have found evidence that one of the world's rarest sharks is alive and well, living off the Welsh coast." />
 </LinearLayout>
