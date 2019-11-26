@@ -16,10 +16,8 @@ class FeedAdaptersTest {
         val updateDateTs = 1448401928L
         val updateDate = Date(updateDateTs)
         val introduction = "introduction"
-        val headline =
-            Headline(text, updateDate, introduction)
-        val dto =
-            HeadlineDto(text, updateDateTs, introduction)
+        val headline = Headline(text, updateDate, introduction)
+        val dto = HeadlineDto(text, updateDateTs, introduction)
         val feed = Feed(listOf(headline))
         val sut = FeedResponse(listOf(dto))
 
