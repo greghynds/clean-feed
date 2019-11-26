@@ -11,7 +11,7 @@
     tools:context=".feed.ui.FeedActivity">
 
     <TextView
-        android:id="@+id/leadingText"
+        android:id="@+id/headlineCardTitleText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/padding_medium"
@@ -22,7 +22,7 @@
         tools:text="Something exciting is happening!" />
 
     <TextView
-        android:id="@+id/dateText"
+        android:id="@+id/headlineCardDateText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/padding_small"

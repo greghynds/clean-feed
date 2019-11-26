@@ -39,11 +39,11 @@ class HeadlineCard : FrameLayout, KoinComponent, HeadlineCardView {
     }
 
     override fun setTitle(title: String) {
-        leadingText.text = title
+        headlineCardTitleText.text = title
     }
 
     override fun setDate(date: String) {
-        dateText.text = date
+        headlineCardDateText.text = date
     }
 
     override fun setOnClickListener(listener: OnClickListener?) {
