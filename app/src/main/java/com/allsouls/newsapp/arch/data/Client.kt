@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
+import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 
@@ -17,7 +17,7 @@ data class ClientConfig(
 )
 
 inline fun <reified Client> createApiClient(config: ClientConfig): Client {
-    val logging by lazy { HttpLoggingInterceptor().apply { level = BODY } }
+    val logging by lazy { HttpLoggingInterceptor().apply { level = BASIC } }
 
     val client = with(config) {
         OkHttpClient()
