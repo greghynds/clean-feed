@@ -17,7 +17,7 @@ val feedModule = module {
     single<FeedClient> { createApiClient(get()) }
     single<FeedRepo> { FeedApi(get()) }
     single { FetchFeed(get()) }
-    factory { (view: FeedView) -> FeedPresenter(get(), get(), view) }
+    factory { (view: FeedView) -> FeedPresenter(get(), get(), get(), view) }
     factory { (view: HeadlineCardView) -> HeadlineCardPresenter(view) }
-    factory { (view: HeadlineView) -> HeadlinePresenter(view) }
+    factory { (view: HeadlineView) -> HeadlinePresenter(get(), get(), view) }
 }

@@ -6,6 +6,7 @@ import com.allsouls.newsapp.arch.presentation.dateFromTimestamp
 import com.allsouls.newsapp.feed.domain.FetchFeed
 import com.allsouls.newsapp.feed.domain.entity.Feed
 import com.allsouls.newsapp.headline.domain.entity.Headline
+import com.allsouls.newsapp.tracking.domain.TrackEvent
 import com.allsouls.newsapp.util.TestDispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
@@ -21,10 +22,9 @@ import kotlin.Result.Companion.success
 @RunWith(MockitoJUnitRunner::class)
 class FeedPresenterTest {
 
-    @Mock
-    lateinit var fetchFeed: FetchFeed
-    @Mock
-    lateinit var view: FeedView
+    @Mock lateinit var fetchFeed: FetchFeed
+    @Mock lateinit var trackEvent: TrackEvent
+    @Mock lateinit var view: FeedView
 
     @Test
     fun `shows feed when feed loaded successfully`() {
@@ -109,6 +109,7 @@ class FeedPresenterTest {
     private fun createPresenter(): FeedPresenter {
         return FeedPresenter(
             fetchFeed,
+            trackEvent,
             TestDispatchers(),
             view
         )

@@ -6,15 +6,22 @@ import com.allsouls.newsapp.arch.presentation.Presenter
 import com.allsouls.newsapp.feed.domain.FetchFeed
 import com.allsouls.newsapp.feed.domain.entity.Feed
 import com.allsouls.newsapp.headline.domain.entity.Headline
+import com.allsouls.newsapp.tracking.domain.Event
+import com.allsouls.newsapp.tracking.domain.TrackEvent
 
 class FeedPresenter(
     private val fetchFeed: FetchFeed,
+    private val trackEvent: TrackEvent,
     dispatchers: Dispatchers,
     private val view: FeedView
 ) : Presenter(dispatchers) {
 
     override fun onCoroutineError(error: Throwable) {
         view.showError(error)
+    }
+
+    fun resume() = background {
+        trackEvent.execute(Event.Display(SCREEN_NAME))
     }
 
     fun load() = main {
@@ -38,5 +45,9 @@ class FeedPresenter(
 
     private fun sortByDate(feed: Feed): Feed {
         return Feed(feed.headlines.sortedByDescending(Headline::updated))
+    }
+
+    companion object {
+        private const val SCREEN_NAME = "feed"
     }
 }

@@ -32,6 +32,11 @@ class FeedActivity : AppCompatActivity(), FeedView {
         presenter.load()
     }
 
+    override fun onResume() {
+        super.onResume()
+        presenter.resume()
+    }
+
     override fun onDestroy() {
         presenter.destroy()
         super.onDestroy()
