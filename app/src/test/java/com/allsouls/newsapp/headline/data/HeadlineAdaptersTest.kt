@@ -5,7 +5,6 @@ import com.allsouls.newsapp.headline.data.dto.HeadlineDto
 import com.allsouls.newsapp.headline.domain.entity.Headline
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.util.*
 
 class HeadlineAdaptersTest {
 

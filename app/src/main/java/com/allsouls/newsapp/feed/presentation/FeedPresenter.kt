@@ -25,10 +25,14 @@ class FeedPresenter(
     }
 
     private fun fetchFeedSuccess(feed: Feed) {
-        view.showFeed(feed)
+        view.showFeed(sortByDate(feed))
     }
 
     private fun fetchFeedFailure(error: Throwable) {
         view.showError(error)
+    }
+
+    private fun sortByDate(feed: Feed): Feed {
+        return Feed(feed.headlines.sortedByDescending(Headline::updated))
     }
 }

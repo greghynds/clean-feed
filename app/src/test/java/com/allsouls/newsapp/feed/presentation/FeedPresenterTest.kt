@@ -2,6 +2,7 @@ package com.allsouls.newsapp.feed.presentation
 
 import com.allsouls.newsapp.arch.data.ApiError
 import com.allsouls.newsapp.arch.domain.Params
+import com.allsouls.newsapp.arch.presentation.dateFromTimestamp
 import com.allsouls.newsapp.feed.domain.FetchFeed
 import com.allsouls.newsapp.feed.domain.entity.Feed
 import com.allsouls.newsapp.headline.domain.entity.Headline
@@ -13,15 +14,17 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
-import java.util.Date
+import java.util.*
 import kotlin.Result.Companion.failure
 import kotlin.Result.Companion.success
 
 @RunWith(MockitoJUnitRunner::class)
 class FeedPresenterTest {
 
-    @Mock lateinit var fetchFeed: FetchFeed
-    @Mock lateinit var view: FeedView
+    @Mock
+    lateinit var fetchFeed: FetchFeed
+    @Mock
+    lateinit var view: FeedView
 
     @Test
     fun `shows feed when feed loaded successfully`() {
@@ -38,6 +41,28 @@ class FeedPresenterTest {
             sut.load()
 
             verify(view).showFeed(feed)
+        }
+    }
+
+    @Test
+    fun `shows sort headlines by date descending when feed loaded successfully`() {
+        runBlocking {
+            val feed = createFeed(
+                createHeadline(updated = dateFromTimestamp(1448601928)),
+                createHeadline(updated = dateFromTimestamp(1459709926)),
+                createHeadline(updated = dateFromTimestamp(1448401928L))
+            )
+            val sorted = createFeed(
+                createHeadline(updated = dateFromTimestamp(1459709926)),
+                createHeadline(updated = dateFromTimestamp(1448601928)),
+                createHeadline(updated = dateFromTimestamp(1448401928L))
+            )
+            val sut = createPresenter()
+            given(fetchFeed.execute(Params.None)).willReturn(success(feed))
+
+            sut.load()
+
+            verify(view).showFeed(sorted)
         }
     }
 
@@ -87,5 +112,17 @@ class FeedPresenterTest {
             TestDispatchers(),
             view
         )
+    }
+
+    private fun createFeed(vararg headline: Headline): Feed {
+        return Feed(headline.toList())
+    }
+
+    private fun createHeadline(
+        title: String = "title",
+        updated: Date = Date(),
+        introduction: String = "introduction"
+    ): Headline {
+        return Headline(title, updated, introduction)
     }
 }
