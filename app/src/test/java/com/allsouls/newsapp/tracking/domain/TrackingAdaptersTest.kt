@@ -14,7 +14,7 @@ class TrackingAdaptersTest {
 
         val result = sut.toMap()
 
-        assertThat(result).isEqualToComparingFieldByField(map)
+        assertThat(result).isEqualTo(map)
     }
 
     @Test
@@ -25,6 +25,6 @@ class TrackingAdaptersTest {
 
         val result = sut.toMap()
 
-        assertThat(result).isEqualToComparingFieldByField(map)
+        assertThat(result).isEqualTo(map)
     }
 }

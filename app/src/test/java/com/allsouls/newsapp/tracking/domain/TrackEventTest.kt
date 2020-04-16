@@ -1,22 +1,19 @@
 package com.allsouls.newsapp.tracking.domain
 
+import com.nhaarman.mockitokotlin2.mock
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mock
 import org.mockito.Mockito.verify
-import org.mockito.junit.MockitoJUnitRunner
 
-@RunWith(MockitoJUnitRunner::class)
+
 class TrackEventTest {
-
-    @Mock lateinit var tracker: Tracker
 
     @Test
     fun `tracks network request event`() {
         runBlocking {
             val time = 100
             val event = Event.NetworkRequest(time)
+            val tracker = mock<Tracker>()
             val sut = TrackEvent(tracker)
 
             sut.execute(event)
@@ -30,6 +27,7 @@ class TrackEventTest {
         runBlocking {
             val screen = "xxx"
             val event = Event.Display(screen)
+            val tracker = mock<Tracker>()
             val sut = TrackEvent(tracker)
 
             sut.execute(event)

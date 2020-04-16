@@ -8,19 +8,14 @@ import com.allsouls.newsapp.headline.data.dto.HeadlineDto
 import com.allsouls.newsapp.headline.domain.entity.Headline
 import com.allsouls.newsapp.util.failureResponse
 import com.allsouls.newsapp.util.successResponse
+import com.nhaarman.mockitokotlin2.given
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.BDDMockito.given
-import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
 
-@RunWith(MockitoJUnitRunner::class)
 class FeedApiTest {
-
-    @Mock
-    lateinit var client: FeedClient
 
     @Test
     fun `returns a response when request is successful`() {
@@ -33,8 +28,9 @@ class FeedApiTest {
             val dto = HeadlineDto(text, updateDateTs, introduction)
             val feed = Feed(listOf(headline))
             val response = FeedResponse(listOf(dto))
-            val sut = createApi()
-            given(client.feed()).willReturn(successResponse(response))
+            val client = mock<FeedClient>()
+            val sut = FeedApi(client)
+            whenever(client.feed()).thenReturn(successResponse(response))
 
             val result = sut.feed()
 
@@ -47,7 +43,8 @@ class FeedApiTest {
         runBlocking {
             val errorMsg = "Request failed"
             val code = 500
-            val sut = createApi()
+            val client = mock<FeedClient>()
+            val sut = FeedApi(client)
             given(client.feed()).willReturn(failureResponse(errorMsg, code))
 
             val result = sut.feed()
@@ -57,9 +54,5 @@ class FeedApiTest {
                 .hasFieldOrPropertyWithValue("code", code)
                 .hasFieldOrPropertyWithValue("message", errorMsg)
         }
-    }
-
-    private fun createApi(): FeedApi {
-        return FeedApi(client)
     }
 }

@@ -1,28 +1,22 @@
 package com.allsouls.newsapp.feed.presentation
 
-import com.allsouls.newsapp.feed.domain.FetchFeed
 import com.allsouls.newsapp.tracking.domain.Event
 import com.allsouls.newsapp.tracking.domain.TrackEvent
 import com.allsouls.newsapp.util.TestDispatchers
+import com.nhaarman.mockitokotlin2.mock
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mock
 import org.mockito.Mockito.verify
-import org.mockito.junit.MockitoJUnitRunner
 
-@RunWith(MockitoJUnitRunner::class)
+
 class FeedPresenterTrackingTest {
-
-    @Mock lateinit var fetchFeed: FetchFeed
-    @Mock lateinit var trackEvent: TrackEvent
-    @Mock lateinit var view: FeedView
 
     @Test
     fun `tracks screen view when resuming`() {
         runBlocking {
             val event = Event.Display("feed")
-            val sut = createPresenter()
+            val trackEvent = mock<TrackEvent>()
+            val sut = createPresenter(trackEvent)
 
             sut.resume()
 
@@ -30,12 +24,12 @@ class FeedPresenterTrackingTest {
         }
     }
 
-    private fun createPresenter(): FeedPresenter {
+    private fun createPresenter(trackEvent: TrackEvent): FeedPresenter {
         return FeedPresenter(
-            fetchFeed,
+            mock(),
             trackEvent,
             TestDispatchers(),
-            view
+            mock()
         )
     }
 }

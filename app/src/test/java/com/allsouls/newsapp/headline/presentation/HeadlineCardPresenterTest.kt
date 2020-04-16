@@ -1,25 +1,20 @@
 package com.allsouls.newsapp.headline.presentation
 
 import com.allsouls.newsapp.headline.domain.entity.Headline
-import com.allsouls.newsapp.headline.presentation.HeadlineCardPresenter
-import com.allsouls.newsapp.headline.presentation.HeadlineCardView
+import com.nhaarman.mockitokotlin2.mock
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mock
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
-import org.mockito.junit.MockitoJUnitRunner
 import java.util.*
 
-@RunWith(MockitoJUnitRunner::class)
 class HeadlineCardPresenterTest {
-
-    @Mock lateinit var view: HeadlineCardView
 
     @Test
     fun `should set title when binding headline`() {
         val title = "title"
         val headline = createHeadline(title = title)
-        val sut = HeadlineCardPresenter(view)
+        val view = mock<HeadlineCardView>()
+        val sut = createPresenter(view)
 
         sut.bind(headline)
 
@@ -31,6 +26,7 @@ class HeadlineCardPresenterTest {
         val timestamp = 1574706996877
         val date = Date(timestamp)
         val headline = createHeadline(updated = date)
+        val view = mock<HeadlineCardView>()
         val sut = HeadlineCardPresenter(view)
 
         sut.bind(headline)
@@ -44,5 +40,9 @@ class HeadlineCardPresenterTest {
         introduction: String = "introduction"
     ): Headline {
         return Headline(title, updated, introduction)
+    }
+
+    private fun createPresenter(view: HeadlineCardView): HeadlineCardPresenter {
+        return HeadlineCardPresenter(view)
     }
 }

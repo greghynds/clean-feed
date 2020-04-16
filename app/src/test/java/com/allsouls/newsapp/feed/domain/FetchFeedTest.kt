@@ -3,28 +3,24 @@ package com.allsouls.newsapp.feed.domain
 import com.allsouls.newsapp.arch.domain.Params
 import com.allsouls.newsapp.feed.domain.entity.Feed
 import com.allsouls.newsapp.headline.domain.entity.Headline
+import com.nhaarman.mockitokotlin2.mock
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
-import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
-import java.util.Date
+import java.util.*
 import kotlin.Result.Companion.success
 
 
-@RunWith(MockitoJUnitRunner::class)
 class FetchFeedTest {
-
-    @Mock lateinit var repo: FeedRepo
 
     @Test
     fun `returns a result when feed fetched successfully`() {
         runBlocking {
             val headline = createHeadline()
             val feed = createFeed(headline)
-            val sut = createUseCase()
+            val repo = mock<FeedRepo>()
+            val sut = FetchFeed(repo)
             given(repo.feed()).willReturn(success(feed))
 
             val result = sut.execute(Params.None)
@@ -38,17 +34,14 @@ class FetchFeedTest {
         runBlocking {
             val headline = createHeadline()
             val feed = createFeed(headline)
-            val sut = createUseCase()
+            val repo = mock<FeedRepo>()
+            val sut = FetchFeed(repo)
             given(repo.feed()).willReturn(success(feed))
 
             val result = sut.execute(Params.None)
 
             assertThat(result.getOrThrow()).isEqualTo(feed)
         }
-    }
-
-    private fun createUseCase(): FetchFeed {
-        return FetchFeed(repo)
     }
 
     private fun createFeed(vararg headlines: Headline): Feed {

@@ -3,18 +3,15 @@ package com.allsouls.newsapp.tracking.data
 import com.allsouls.newsapp.tracking.domain.Event
 import com.allsouls.newsapp.util.failureResponse
 import com.allsouls.newsapp.util.successResponse
+import com.nhaarman.mockitokotlin2.mock
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
-import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 
-@RunWith(MockitoJUnitRunner::class)
 class AnalyticsApiTest {
-
-    @Mock lateinit var client: AnalyticsClient
 
     @Test
     fun `should return success when event tracked successfully`() {
@@ -22,6 +19,7 @@ class AnalyticsApiTest {
             val time = 100
             val event = Event.NetworkRequest(time)
             val params = event.toMap()
+            val client = mock<AnalyticsClient>()
             val sut = AnalyticsApi(client)
             given(client.track(params)).willReturn(successResponse({}()))
 
@@ -37,6 +35,7 @@ class AnalyticsApiTest {
             val time = 100
             val event = Event.NetworkRequest(time)
             val params = event.toMap()
+            val client = mock<AnalyticsClient>()
             val sut = AnalyticsApi(client)
             given(client.track(params)).willReturn(failureResponse("Could not track event", 500))
 

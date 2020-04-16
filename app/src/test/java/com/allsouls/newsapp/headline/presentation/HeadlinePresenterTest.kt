@@ -1,26 +1,23 @@
 package com.allsouls.newsapp.headline.presentation
 
 import com.allsouls.newsapp.headline.domain.entity.Headline
-import com.allsouls.newsapp.tracking.domain.TrackEvent
 import com.allsouls.newsapp.util.TestDispatchers
+import com.nhaarman.mockitokotlin2.mock
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import java.util.*
 
-@RunWith(MockitoJUnitRunner::class)
-class HeadlinePresenterTest {
 
-    @Mock lateinit var trackEvent: TrackEvent
-    @Mock lateinit var view: HeadlineView
+class HeadlinePresenterTest {
 
     @Test
     fun `should set title when rendering headline`() {
         val title = "title"
         val headline = createHeadline(title)
-        val sut = createPresenter()
+        val view = mock<HeadlineView>()
+        val sut = createPresenter(view)
 
         sut.render(headline)
 
@@ -32,7 +29,8 @@ class HeadlinePresenterTest {
         val timestamp = 1574706996877
         val date = Date(timestamp)
         val headline = createHeadline(updated = date)
-        val sut = createPresenter()
+        val view = mock<HeadlineView>()
+        val sut = createPresenter(view)
 
         sut.render(headline)
 
@@ -43,16 +41,17 @@ class HeadlinePresenterTest {
     fun `should set introduction when rendering headline`() {
         val introduction = "introduction"
         val headline = createHeadline(introduction = introduction)
-        val sut = createPresenter()
+        val view = mock<HeadlineView>()
+        val sut = createPresenter(view)
 
         sut.render(headline)
 
         verify(view).setIntroduction(introduction)
     }
 
-    private fun createPresenter(): HeadlinePresenter {
+    private fun createPresenter(view: HeadlineView): HeadlinePresenter {
         return HeadlinePresenter(
-            trackEvent,
+            mock(),
             TestDispatchers(),
             view
         )

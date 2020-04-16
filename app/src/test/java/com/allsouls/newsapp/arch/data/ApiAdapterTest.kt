@@ -5,13 +5,10 @@ import okhttp3.MediaType
 import okhttp3.ResponseBody
 import org.assertj.core.api.Java6Assertions.assertThat
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.junit.MockitoJUnitRunner
 import retrofit2.Response
 import kotlin.Result.Companion.success
 
 
-@RunWith(MockitoJUnitRunner::class)
 class ApiAdapterTest {
 
     @Test
