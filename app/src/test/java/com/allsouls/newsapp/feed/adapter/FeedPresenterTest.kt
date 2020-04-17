@@ -1,16 +1,13 @@
-package com.allsouls.newsapp.feed.presentation
+package com.allsouls.newsapp.feed.adapter
 
 import com.allsouls.newsapp.arch.data.ApiError
-import com.allsouls.newsapp.arch.domain.Params
 import com.allsouls.newsapp.arch.presentation.dateFromTimestamp
-import com.allsouls.newsapp.feed.domain.FetchFeed
 import com.allsouls.newsapp.feed.domain.entity.Feed
 import com.allsouls.newsapp.headline.domain.entity.Headline
 import com.allsouls.newsapp.util.TestDispatchers
 import com.nhaarman.mockitokotlin2.mock
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import org.mockito.BDDMockito.given
 import org.mockito.Mockito.verify
 import java.util.*
 import kotlin.Result.Companion.failure
@@ -27,12 +24,10 @@ class FeedPresenterTest {
             val introduction = "introduction"
             val headline = Headline(text, updateDate, introduction)
             val feed = Feed(listOf(headline))
-            val fetchFeed = mock<FetchFeed>()
             val view = mock<FeedView>()
-            val sut = createPresenter(view, fetchFeed)
-            given(fetchFeed.execute(Params.None)).willReturn(success(feed))
+            val sut = createPresenter(view)
 
-            sut.load()
+            sut.receive(success(feed))
 
             verify(view).showFeed(feed)
         }
@@ -51,12 +46,10 @@ class FeedPresenterTest {
                 createHeadline(updated = dateFromTimestamp(1448601928)),
                 createHeadline(updated = dateFromTimestamp(1448401928L))
             )
-            val fetchFeed = mock<FetchFeed>()
             val view = mock<FeedView>()
-            val sut = createPresenter(view, fetchFeed)
-            given(fetchFeed.execute(Params.None)).willReturn(success(feed))
+            val sut = createPresenter(view)
 
-            sut.load()
+            sut.receive(success(feed))
 
             verify(view).showFeed(sorted)
         }
@@ -66,12 +59,10 @@ class FeedPresenterTest {
     fun `shows error when loading feed failed`() {
         runBlocking {
             val error = ApiError(500, "Couldn't load feed.")
-            val fetchFeed = mock<FetchFeed>()
             val view = mock<FeedView>()
-            val sut = createPresenter(view, fetchFeed)
-            given(fetchFeed.execute(Params.None)).willReturn(failure(error))
+            val sut = createPresenter(view)
 
-            sut.load()
+            sut.receive(failure(error))
 
             verify(view).showError(error)
         }
@@ -100,18 +91,16 @@ class FeedPresenterTest {
             val view = mock<FeedView>()
             val sut = createPresenter(view)
 
-            sut.load()
+            sut.loading()
 
             verify(view).showLoading()
         }
     }
 
-    private fun createPresenter(view: FeedView, fetchFeed: FetchFeed = mock()): FeedPresenter {
+    private fun createPresenter(view: FeedView): FeedPresenter {
         return FeedPresenter(
-            fetchFeed,
-            mock(),
-            TestDispatchers(),
-            view
+            view,
+            TestDispatchers()
         )
     }
 

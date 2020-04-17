@@ -1,10 +1,10 @@
 package com.allsouls.newsapp.tracking.domain
 
-import com.allsouls.newsapp.arch.domain.UseCase
+import com.allsouls.newsapp.arch.domain.InputPort
 
-class TrackEvent(private val tracker: Tracker) : UseCase<Event, Unit>() {
+class TrackEvent(private val tracker: Tracker) : InputPort<Event> {
 
-    override suspend fun operation(params: Event): Result<Unit> {
-        return tracker.track(params)
+    override suspend fun send(params: Event) {
+        tracker.track(params)
     }
 }

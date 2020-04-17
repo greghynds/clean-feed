@@ -19,7 +19,7 @@ class TrackingService(
         }
 
     fun track(event: Event) {
-        io { trackEvent.execute(event) }
+        io { trackEvent.send(event) }
     }
 
     private fun io(block: suspend CoroutineScope.() -> Unit): Job {

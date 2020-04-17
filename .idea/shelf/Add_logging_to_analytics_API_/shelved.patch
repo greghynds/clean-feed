@@ -1,0 +1,320 @@
+Index: app/src/main/java/com/allsouls/newsapp/arch/presentation/Presenter.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.allsouls.newsapp.arch.presentation\n\n\n\nimport kotlinx.coroutines.withContext\nimport kotlinx.coroutines.CoroutineExceptionHandler\nimport kotlinx.coroutines.CoroutineScope\nimport kotlinx.coroutines.CoroutineStart\nimport kotlinx.coroutines.GlobalScope\nimport kotlinx.coroutines.Job\nimport kotlinx.coroutines.launch\nimport kotlin.coroutines.CoroutineContext\n\nabstract class Presenter(private val dispatchers: Dispatchers) : CoroutineScope {\n\n    private val job = Job()\n\n    protected open fun onCoroutineError(error: Throwable) {\n        // override for debugging\n    }\n\n    override val coroutineContext: CoroutineContext\n        get() = dispatchers.main + job + CoroutineExceptionHandler { _, error ->\n            GlobalScope.launch(dispatchers.main) { onCoroutineError(error) }\n        }\n\n    /**\n     * Launches a coroutine that runs in the UI context.\n     */\n    fun CoroutineScope.main(block: suspend CoroutineScope.() -> Unit): Job {\n        return launch(coroutineContext, CoroutineStart.DEFAULT, block)\n    }\n\n    /**\n     * Executes the [block] in a coroutine that runs in the IO context.\n     */\n    suspend fun <T> io(block: suspend CoroutineScope.() -> T): T =\n        withContext(dispatchers.io, block)\n\n    /**\n     *  Executes the [block] in a coroutine that runs in the IO context.\n     *\n     * This should be used for background tasks that don't need to\n     * post a result back to the UI.\n     */\n    fun CoroutineScope.background(block: suspend CoroutineScope.() -> Unit): Job =\n        launch(dispatchers.io, CoroutineStart.DEFAULT, block)\n\n    /**\n     * Cancels all running jobs.\n     */\n    fun destroy() = job.cancel()\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/allsouls/newsapp/arch/presentation/Presenter.kt	(revision db55723b8e32638460c71dd30a13db4d96c21d3c)
++++ app/src/main/java/com/allsouls/newsapp/arch/presentation/Presenter.kt	(date 1586739204000)
+@@ -1,14 +1,7 @@
+ package com.allsouls.newsapp.arch.presentation
+ 
+ 
+-
+-import kotlinx.coroutines.withContext
+-import kotlinx.coroutines.CoroutineExceptionHandler
+-import kotlinx.coroutines.CoroutineScope
+-import kotlinx.coroutines.CoroutineStart
+-import kotlinx.coroutines.GlobalScope
+-import kotlinx.coroutines.Job
+-import kotlinx.coroutines.launch
++import kotlinx.coroutines.*
+ import kotlin.coroutines.CoroutineContext
+ 
+ abstract class Presenter(private val dispatchers: Dispatchers) : CoroutineScope {
+@@ -31,20 +24,15 @@
+         return launch(coroutineContext, CoroutineStart.DEFAULT, block)
+     }
+ 
+-    /**
+-     * Executes the [block] in a coroutine that runs in the IO context.
+-     */
+-    suspend fun <T> io(block: suspend CoroutineScope.() -> T): T =
+-        withContext(dispatchers.io, block)
+-
+     /**
+      *  Executes the [block] in a coroutine that runs in the IO context.
+      *
+      * This should be used for background tasks that don't need to
+      * post a result back to the UI.
+      */
+-    fun CoroutineScope.background(block: suspend CoroutineScope.() -> Unit): Job =
+-        launch(dispatchers.io, CoroutineStart.DEFAULT, block)
++    fun CoroutineScope.background(block: suspend CoroutineScope.() -> Unit): Job {
++        return launch(dispatchers.io, CoroutineStart.DEFAULT, block)
++    }
+ 
+     /**
+      * Cancels all running jobs.
+Index: app/src/test/java/com/allsouls/newsapp/feed/domain/FeedControllerTest.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/com/allsouls/newsapp/feed/domain/FeedControllerTest.kt	(date 1586742032000)
++++ app/src/test/java/com/allsouls/newsapp/feed/domain/FeedControllerTest.kt	(date 1586742032000)
+@@ -0,0 +1,39 @@
++package com.allsouls.newsapp.feed.domain
++
++import com.allsouls.newsapp.arch.domain.Params
++import com.allsouls.newsapp.feed.domain.entity.Feed
++import com.allsouls.newsapp.util.TestDispatchers
++import kotlinx.coroutines.runBlocking
++import org.junit.Test
++import org.junit.runner.RunWith
++import org.mockito.BDDMockito.given
++import org.mockito.BDDMockito.verify
++import org.mockito.Mock
++import org.mockito.junit.MockitoJUnitRunner
++import kotlin.Result.Companion.success
++
++@RunWith(MockitoJUnitRunner::class)
++class FeedControllerTest {
++
++    @Mock
++    lateinit var fetchFeed: FetchFeed
++    @Mock
++    lateinit var callback: Callback<Feed>
++
++    @Test
++    fun `posts success result when fetching feed succeeds`() {
++        runBlocking {
++            val feed = Feed(listOf())
++            val sut = FeedController(fetchFeed, TestDispatchers())
++            given(fetchFeed.execute(Params.None)).willReturn(success(feed))
++
++            sut.fetchFeed(onSuccess = { result -> callback.invoke(result) })
++
++            verify(callback.invoke(feed))
++        }
++    }
++
++    interface Callback<T> {
++        fun invoke(data: T)
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/allsouls/newsapp/feed/domain/FeedController.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/allsouls/newsapp/feed/domain/FeedController.kt	(date 1586799212000)
++++ app/src/main/java/com/allsouls/newsapp/feed/domain/FeedController.kt	(date 1586799212000)
+@@ -0,0 +1,37 @@
++package com.allsouls.newsapp.feed.domain
++
++import com.allsouls.newsapp.arch.domain.Params
++import com.allsouls.newsapp.arch.presentation.Dispatchers
++import com.allsouls.newsapp.feed.domain.entity.Feed
++import kotlinx.coroutines.*
++import kotlin.coroutines.CoroutineContext
++
++class FeedController(
++    private val fetchFeed: FetchFeed,
++    private val dispatchers: Dispatchers
++) : CoroutineScope {
++
++    private fun onCoroutineError(error: Throwable) {
++        // override for debugging
++    }
++
++    private val job = Job()
++
++    override val coroutineContext: CoroutineContext
++        get() = dispatchers.main + job + CoroutineExceptionHandler { _, error ->
++            GlobalScope.launch(dispatchers.main) { onCoroutineError(error) }
++        }
++
++    fun fetchFeed(
++        onSuccess: (Feed) -> Unit = {},
++        onFailure: (Throwable) -> Unit = {}
++    ) {
++        launch {
++            withContext(dispatchers.io) {
++                fetchFeed.execute(Params.None).fold(onSuccess, onFailure)
++            }
++        }
++    }
++
++    fun destroy() = job.cancel()
++}
+\ No newline at end of file
+Index: app/src/main/java/com/allsouls/newsapp/feed/domain/ResultListener.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/allsouls/newsapp/feed/domain/ResultListener.kt	(date 1586737395000)
++++ app/src/main/java/com/allsouls/newsapp/feed/domain/ResultListener.kt	(date 1586737395000)
+@@ -0,0 +1,6 @@
++package com.allsouls.newsapp.feed.domain
++
++interface ResultListener<T> {
++    fun notifySuccess(result: T)
++    fun notifyFailure(error: Throwable)
++}
+\ No newline at end of file
+Index: app/src/test/java/com/allsouls/newsapp/feed/presentation/FeedPresenterTrackingTest.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.allsouls.newsapp.feed.presentation\n\nimport com.allsouls.newsapp.feed.domain.FetchFeed\nimport com.allsouls.newsapp.tracking.domain.Event\nimport com.allsouls.newsapp.tracking.domain.TrackEvent\nimport com.allsouls.newsapp.util.TestDispatchers\nimport kotlinx.coroutines.runBlocking\nimport org.junit.Test\nimport org.junit.runner.RunWith\nimport org.mockito.Mock\nimport org.mockito.Mockito.verify\nimport org.mockito.junit.MockitoJUnitRunner\n\n@RunWith(MockitoJUnitRunner::class)\nclass FeedPresenterTrackingTest {\n\n    @Mock lateinit var fetchFeed: FetchFeed\n    @Mock lateinit var trackEvent: TrackEvent\n    @Mock lateinit var view: FeedView\n\n    @Test\n    fun `tracks screen view when resuming`() {\n        runBlocking {\n            val event = Event.Display(\"feed\")\n            val sut = createPresenter()\n\n            sut.resume()\n\n            verify(trackEvent).execute(event)\n        }\n    }\n\n    private fun createPresenter(): FeedPresenter {\n        return FeedPresenter(\n            fetchFeed,\n            trackEvent,\n            TestDispatchers(),\n            view\n        )\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/com/allsouls/newsapp/feed/presentation/FeedPresenterTrackingTest.kt	(revision db55723b8e32638460c71dd30a13db4d96c21d3c)
++++ app/src/test/java/com/allsouls/newsapp/feed/presentation/FeedPresenterTrackingTest.kt	(date 1586738982000)
+@@ -1,5 +1,6 @@
+ package com.allsouls.newsapp.feed.presentation
+ 
++import com.allsouls.newsapp.feed.domain.FeedController
+ import com.allsouls.newsapp.feed.domain.FetchFeed
+ import com.allsouls.newsapp.tracking.domain.Event
+ import com.allsouls.newsapp.tracking.domain.TrackEvent
+@@ -14,7 +15,7 @@
+ @RunWith(MockitoJUnitRunner::class)
+ class FeedPresenterTrackingTest {
+ 
+-    @Mock lateinit var fetchFeed: FetchFeed
++    @Mock lateinit var feedController: FeedController
+     @Mock lateinit var trackEvent: TrackEvent
+     @Mock lateinit var view: FeedView
+ 
+@@ -32,7 +33,7 @@
+ 
+     private fun createPresenter(): FeedPresenter {
+         return FeedPresenter(
+-            fetchFeed,
++            feedController,
+             trackEvent,
+             TestDispatchers(),
+             view
+Index: app/src/main/java/com/allsouls/newsapp/feed/presentation/FeedPresenter.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.allsouls.newsapp.feed.presentation\n\nimport com.allsouls.newsapp.arch.domain.Params\nimport com.allsouls.newsapp.arch.presentation.Dispatchers\nimport com.allsouls.newsapp.arch.presentation.Presenter\nimport com.allsouls.newsapp.feed.domain.FetchFeed\nimport com.allsouls.newsapp.feed.domain.entity.Feed\nimport com.allsouls.newsapp.headline.domain.entity.Headline\nimport com.allsouls.newsapp.tracking.domain.Event\nimport com.allsouls.newsapp.tracking.domain.TrackEvent\n\nclass FeedPresenter(\n    private val fetchFeed: FetchFeed,\n    private val trackEvent: TrackEvent,\n    dispatchers: Dispatchers,\n    private val view: FeedView\n) : Presenter(dispatchers) {\n\n    override fun onCoroutineError(error: Throwable) {\n        view.showError(error)\n    }\n\n    fun resume() = background {\n        trackEvent.execute(Event.Display(SCREEN_NAME))\n    }\n\n    fun load() = main {\n        view.showLoading()\n\n        io { fetchFeed.execute(Params.None) }\n            .fold(::fetchFeedSuccess, ::fetchFeedFailure)\n    }\n\n    fun selectHeadline(headline: Headline) {\n        view.showDetail(headline)\n    }\n\n    private fun fetchFeedSuccess(feed: Feed) {\n        view.showFeed(sortByDate(feed))\n    }\n\n    private fun fetchFeedFailure(error: Throwable) {\n        view.showError(error)\n    }\n\n    private fun sortByDate(feed: Feed): Feed {\n        return Feed(feed.headlines.sortedByDescending(Headline::updated))\n    }\n\n    companion object {\n        private const val SCREEN_NAME = \"feed\"\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/allsouls/newsapp/feed/presentation/FeedPresenter.kt	(revision db55723b8e32638460c71dd30a13db4d96c21d3c)
++++ app/src/main/java/com/allsouls/newsapp/feed/presentation/FeedPresenter.kt	(date 1586739651000)
+@@ -1,16 +1,15 @@
+ package com.allsouls.newsapp.feed.presentation
+ 
+-import com.allsouls.newsapp.arch.domain.Params
+ import com.allsouls.newsapp.arch.presentation.Dispatchers
+ import com.allsouls.newsapp.arch.presentation.Presenter
+-import com.allsouls.newsapp.feed.domain.FetchFeed
++import com.allsouls.newsapp.feed.domain.FeedController
+ import com.allsouls.newsapp.feed.domain.entity.Feed
+ import com.allsouls.newsapp.headline.domain.entity.Headline
+ import com.allsouls.newsapp.tracking.domain.Event
+ import com.allsouls.newsapp.tracking.domain.TrackEvent
+ 
+ class FeedPresenter(
+-    private val fetchFeed: FetchFeed,
++    private val fetchController: FeedController,
+     private val trackEvent: TrackEvent,
+     dispatchers: Dispatchers,
+     private val view: FeedView
+@@ -24,24 +23,19 @@
+         trackEvent.execute(Event.Display(SCREEN_NAME))
+     }
+ 
+-    fun load() = main {
++    fun load() {
+         view.showLoading()
+ 
+-        io { fetchFeed.execute(Params.None) }
+-            .fold(::fetchFeedSuccess, ::fetchFeedFailure)
++        fetchController.fetchFeed(
++            onSuccess = { feed -> view.showFeed(sortByDate(feed)) },
++            onFailure = { error -> view.showError(error) }
++        )
+     }
+ 
+     fun selectHeadline(headline: Headline) {
+         view.showDetail(headline)
+     }
+ 
+-    private fun fetchFeedSuccess(feed: Feed) {
+-        view.showFeed(sortByDate(feed))
+-    }
+-
+-    private fun fetchFeedFailure(error: Throwable) {
+-        view.showError(error)
+-    }
+ 
+     private fun sortByDate(feed: Feed): Feed {
+         return Feed(feed.headlines.sortedByDescending(Headline::updated))
+Index: app/src/test/java/com/allsouls/newsapp/feed/presentation/FeedPresenterTest.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.allsouls.newsapp.feed.presentation\n\nimport com.allsouls.newsapp.arch.data.ApiError\nimport com.allsouls.newsapp.arch.domain.Params\nimport com.allsouls.newsapp.arch.presentation.dateFromTimestamp\nimport com.allsouls.newsapp.feed.domain.FetchFeed\nimport com.allsouls.newsapp.feed.domain.entity.Feed\nimport com.allsouls.newsapp.headline.domain.entity.Headline\nimport com.allsouls.newsapp.tracking.domain.TrackEvent\nimport com.allsouls.newsapp.util.TestDispatchers\nimport kotlinx.coroutines.runBlocking\nimport org.junit.Test\nimport org.junit.runner.RunWith\nimport org.mockito.BDDMockito.given\nimport org.mockito.Mock\nimport org.mockito.Mockito.verify\nimport org.mockito.junit.MockitoJUnitRunner\nimport java.util.*\nimport kotlin.Result.Companion.failure\nimport kotlin.Result.Companion.success\n\n@RunWith(MockitoJUnitRunner::class)\nclass FeedPresenterTest {\n\n    @Mock lateinit var fetchFeed: FetchFeed\n    @Mock lateinit var trackEvent: TrackEvent\n    @Mock lateinit var view: FeedView\n\n    @Test\n    fun `shows feed when feed loaded successfully`() {\n        runBlocking {\n            val text = \"headline\"\n            val updateDateTs = 1448401928L\n            val updateDate = Date(updateDateTs)\n            val introduction = \"introduction\"\n            val headline = Headline(text, updateDate, introduction)\n            val feed = Feed(listOf(headline))\n            val sut = createPresenter()\n            given(fetchFeed.execute(Params.None)).willReturn(success(feed))\n\n            sut.load()\n\n            verify(view).showFeed(feed)\n        }\n    }\n\n    @Test\n    fun `shows sort headlines by date descending when feed loaded successfully`() {\n        runBlocking {\n            val feed = createFeed(\n                createHeadline(updated = dateFromTimestamp(1448601928)),\n                createHeadline(updated = dateFromTimestamp(1459709926)),\n                createHeadline(updated = dateFromTimestamp(1448401928L))\n            )\n            val sorted = createFeed(\n                createHeadline(updated = dateFromTimestamp(1459709926)),\n                createHeadline(updated = dateFromTimestamp(1448601928)),\n                createHeadline(updated = dateFromTimestamp(1448401928L))\n            )\n            val sut = createPresenter()\n            given(fetchFeed.execute(Params.None)).willReturn(success(feed))\n\n            sut.load()\n\n            verify(view).showFeed(sorted)\n        }\n    }\n\n    @Test\n    fun `shows error when loading feed failed`() {\n        runBlocking {\n            val error = ApiError(500, \"Couldn't load feed.\")\n            val sut = createPresenter()\n            given(fetchFeed.execute(Params.None)).willReturn(failure(error))\n\n            sut.load()\n\n            verify(view).showError(error)\n        }\n    }\n\n    @Test\n    fun `navigates to detail view when headline selected`() {\n        runBlocking {\n            val headline = Headline(\n                \"title\",\n                Date(),\n                \"introduction\"\n            )\n            val sut = createPresenter()\n\n            sut.selectHeadline(headline)\n\n            verify(view).showDetail(headline)\n        }\n    }\n\n    @Test\n    fun `shows loading indicator when fetching feed`() {\n        runBlocking {\n            val sut = createPresenter()\n\n            sut.load()\n\n            verify(view).showLoading()\n        }\n    }\n\n    private fun createPresenter(): FeedPresenter {\n        return FeedPresenter(\n            fetchFeed,\n            trackEvent,\n            TestDispatchers(),\n            view\n        )\n    }\n\n    private fun createFeed(vararg headline: Headline): Feed {\n        return Feed(headline.toList())\n    }\n\n    private fun createHeadline(\n        title: String = \"title\",\n        updated: Date = Date(),\n        introduction: String = \"introduction\"\n    ): Headline {\n        return Headline(title, updated, introduction)\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/com/allsouls/newsapp/feed/presentation/FeedPresenterTest.kt	(revision db55723b8e32638460c71dd30a13db4d96c21d3c)
++++ app/src/test/java/com/allsouls/newsapp/feed/presentation/FeedPresenterTest.kt	(date 1586742032000)
+@@ -3,7 +3,7 @@
+ import com.allsouls.newsapp.arch.data.ApiError
+ import com.allsouls.newsapp.arch.domain.Params
+ import com.allsouls.newsapp.arch.presentation.dateFromTimestamp
+-import com.allsouls.newsapp.feed.domain.FetchFeed
++import com.allsouls.newsapp.feed.domain.FeedController
+ import com.allsouls.newsapp.feed.domain.entity.Feed
+ import com.allsouls.newsapp.headline.domain.entity.Headline
+ import com.allsouls.newsapp.tracking.domain.TrackEvent
+@@ -22,9 +22,12 @@
+ @RunWith(MockitoJUnitRunner::class)
+ class FeedPresenterTest {
+ 
+-    @Mock lateinit var fetchFeed: FetchFeed
+-    @Mock lateinit var trackEvent: TrackEvent
+-    @Mock lateinit var view: FeedView
++    @Mock
++    lateinit var feedController: FeedController
++    @Mock
++    lateinit var trackEvent: TrackEvent
++    @Mock
++    lateinit var view: FeedView
+ 
+     @Test
+     fun `shows feed when feed loaded successfully`() {
+@@ -36,7 +39,7 @@
+             val headline = Headline(text, updateDate, introduction)
+             val feed = Feed(listOf(headline))
+             val sut = createPresenter()
+-            given(fetchFeed.execute(Params.None)).willReturn(success(feed))
++            given(`feedController`.fetchFeed()).willReturn(success(feed))
+ 
+             sut.load()
+ 
+@@ -58,7 +61,7 @@
+                 createHeadline(updated = dateFromTimestamp(1448401928L))
+             )
+             val sut = createPresenter()
+-            given(fetchFeed.execute(Params.None)).willReturn(success(feed))
++            given(feedController.fetchFeed()).willReturn(success(feed))
+ 
+             sut.load()
+ 
+@@ -71,7 +74,7 @@
+         runBlocking {
+             val error = ApiError(500, "Couldn't load feed.")
+             val sut = createPresenter()
+-            given(fetchFeed.execute(Params.None)).willReturn(failure(error))
++            given(feedController.fetchFeed()).willReturn(failure(error))
+ 
+             sut.load()
+ 
+@@ -108,7 +111,7 @@
+ 
+     private fun createPresenter(): FeedPresenter {
+         return FeedPresenter(
+-            fetchFeed,
++            feedController,
+             trackEvent,
+             TestDispatchers(),
+             view

@@ -6,19 +6,26 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsouls.newsapp.R
+import com.allsouls.newsapp.feed.domain.FetchFeed
 import com.allsouls.newsapp.feed.domain.entity.Feed
-import com.allsouls.newsapp.feed.presentation.FeedPresenter
-import com.allsouls.newsapp.feed.presentation.FeedView
+import com.allsouls.newsapp.feed.adapter.FeedController
+import com.allsouls.newsapp.feed.adapter.FeedPresenter
+import com.allsouls.newsapp.feed.adapter.FeedTrackingController
+import com.allsouls.newsapp.feed.adapter.FeedView
 import com.allsouls.newsapp.feed.ui.adapter.HeadlinesAdapter
 import com.allsouls.newsapp.headline.domain.entity.Headline
 import com.allsouls.newsapp.headline.ui.HeadlineActivity
+import com.allsouls.newsapp.tracking.domain.TrackEvent
 import kotlinx.android.synthetic.main.activity_feed.*
-import org.koin.android.ext.android.inject
-import org.koin.core.parameter.parametersOf
+import org.koin.android.ext.android.get
 
 class FeedActivity : AppCompatActivity(), FeedView {
 
-    private val presenter: FeedPresenter by inject { parametersOf(this) }
+    private val presenter = FeedPresenter(this, get())
+    private val fetchFeed = FetchFeed(get(), presenter)
+    private val trackEvent = TrackEvent(get())
+    private val feedController = FeedController(fetchFeed, get())
+    private val trackingController = FeedTrackingController(trackEvent, get())
 
     private lateinit var adapter: HeadlinesAdapter
 
@@ -28,17 +35,17 @@ class FeedActivity : AppCompatActivity(), FeedView {
 
         configView()
         bindActions()
-
-        presenter.load()
+        fetchFeed()
     }
 
     override fun onResume() {
+        trackingController.resume()
         super.onResume()
-        presenter.resume()
     }
 
     override fun onDestroy() {
-        presenter.destroy()
+        feedController.destroy()
+        trackingController.destroy()
         super.onDestroy()
     }
 
@@ -74,7 +81,7 @@ class FeedActivity : AppCompatActivity(), FeedView {
     private fun bindActions() {
         swipeToRefresh.apply {
             setOnRefreshListener {
-                presenter.load()
+                fetchFeed()
                 isRefreshing = false
             }
         }
@@ -85,5 +92,10 @@ class FeedActivity : AppCompatActivity(), FeedView {
             feed.headlines,
             onItemClick = { headline -> presenter.selectHeadline(headline) }
         )
+    }
+
+    private fun fetchFeed() {
+        feedController.fetchFeed()
+        presenter.loading()
     }
 }

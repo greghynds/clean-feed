@@ -21,7 +21,7 @@ class TrackingServiceTest {
 
             sut.track(event)
 
-            verify(trackEvent).execute(event)
+            verify(trackEvent).send(event)
         }
     }
 }

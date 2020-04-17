@@ -1,4 +1,4 @@
-package com.allsouls.newsapp.feed.presentation
+package com.allsouls.newsapp.feed.adapter
 
 import com.allsouls.newsapp.feed.domain.entity.Feed
 import com.allsouls.newsapp.headline.domain.entity.Headline

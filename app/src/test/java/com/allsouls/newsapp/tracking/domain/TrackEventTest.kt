@@ -16,7 +16,7 @@ class TrackEventTest {
             val tracker = mock<Tracker>()
             val sut = TrackEvent(tracker)
 
-            sut.execute(event)
+            sut.send(event)
 
             verify(tracker).track(event)
         }
@@ -30,7 +30,7 @@ class TrackEventTest {
             val tracker = mock<Tracker>()
             val sut = TrackEvent(tracker)
 
-            sut.execute(event)
+            sut.send(event)
 
             verify(tracker).track(event)
         }

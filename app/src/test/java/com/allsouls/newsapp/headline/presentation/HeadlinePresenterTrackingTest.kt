@@ -21,7 +21,7 @@ class HeadlinePresenterTrackingTest {
 
             sut.resume()
 
-            verify(trackEvent).execute(event)
+            verify(trackEvent).send(event)
         }
     }
 
