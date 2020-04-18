@@ -1,2 +1,5 @@
 include ':app'
 rootProject.name='News App'
+include ':feed'
+include ':core'
+include ':tracking'

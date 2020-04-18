@@ -1,34 +1,26 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-
-    compileSdkVersion 28
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "gwh.xyz.cleanfeed"
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion 16
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
     }
 
     buildTypes {
-        debug {
-            buildConfigField "String", "HOST", "\"${project.properties.get("host")}\""
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
-            buildConfigField "String", "HOST", "\"${project.properties.get("host")}\""
         }
-    }
-
-    androidExtensions {
-        experimental = true
     }
 
     kotlinOptions {
@@ -37,8 +29,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.2.0'
@@ -54,10 +44,7 @@ dependencies {
     implementation "org.koin:koin-android:2.0.1"
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
-
     implementation project(":core")
-    implementation project(":feed")
-    implementation project(":tracking")
 
     testImplementation 'junit:junit:4.12'
     testImplementation "org.assertj:assertj-core:3.15.0"

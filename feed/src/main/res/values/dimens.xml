@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_medium">24dp</dimen>
+    <dimen name="padding_small">12dp</dimen>
+
+    <dimen name="divider_height">1dp</dimen>
+
+    <dimen name="headline_bottom_padding">8dp</dimen>
+    <dimen name="headline_introduction_top_margin">@dimen/padding_medium</dimen>
+</resources>
