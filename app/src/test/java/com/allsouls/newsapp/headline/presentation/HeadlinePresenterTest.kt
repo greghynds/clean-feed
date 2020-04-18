@@ -1,12 +1,9 @@
 package com.allsouls.newsapp.headline.presentation
 
 import com.allsouls.newsapp.headline.domain.entity.Headline
-import com.allsouls.newsapp.util.TestDispatchers
 import com.nhaarman.mockitokotlin2.mock
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.verify
-import org.mockito.junit.MockitoJUnitRunner
 import java.util.*
 
 
@@ -50,11 +47,7 @@ class HeadlinePresenterTest {
     }
 
     private fun createPresenter(view: HeadlineView): HeadlinePresenter {
-        return HeadlinePresenter(
-            mock(),
-            TestDispatchers(),
-            view
-        )
+        return HeadlinePresenter(view)
     }
 
     private fun createHeadline(

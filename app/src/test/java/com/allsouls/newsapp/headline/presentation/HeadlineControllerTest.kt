@@ -1,4 +1,4 @@
-package com.allsouls.newsapp.feed.adapter
+package com.allsouls.newsapp.headline.presentation
 
 import com.allsouls.newsapp.tracking.domain.Event
 import com.allsouls.newsapp.tracking.domain.TrackEventPort
@@ -8,18 +8,18 @@ import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
-class FeedTrackingControllerTest {
+class HeadlineControllerTest {
 
     @Test
-    fun `tracks screen view when resuming`() {
+    fun `tracks screen view when resumed`() {
         runBlocking {
-            val event = Event.Display("feed")
-            val inputPort = mock<TrackEventPort>()
-            val sut = FeedTrackingController(inputPort, TestDispatchers())
+            val event = Event.Display("headline")
+            val trackEvent = mock<TrackEventPort>()
+            val sut = HeadlineController(trackEvent, TestDispatchers())
 
             sut.resume()
 
-            verify(inputPort).send(event)
+            verify(trackEvent).send(event)
         }
     }
 }

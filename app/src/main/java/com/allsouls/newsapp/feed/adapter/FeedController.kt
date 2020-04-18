@@ -8,11 +8,11 @@ import com.allsouls.newsapp.arch.presentation.Dispatchers
 import kotlinx.coroutines.launch
 
 class FeedController(
-    private val inputPort: InputPort<Params>,
+    private val fetchFeed: InputPort<Params>,
     dispatchers: Dispatchers
 ) : Controller(dispatchers) {
 
     fun fetchFeed() = launch {
-        inputPort.send(params = None)
+        fetchFeed.send(params = None)
     }
 }

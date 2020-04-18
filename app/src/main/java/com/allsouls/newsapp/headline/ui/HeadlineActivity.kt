@@ -7,15 +7,21 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.allsouls.newsapp.R
 import com.allsouls.newsapp.headline.domain.entity.Headline
+import com.allsouls.newsapp.headline.presentation.HeadlineController
 import com.allsouls.newsapp.headline.presentation.HeadlinePresenter
 import com.allsouls.newsapp.headline.presentation.HeadlineView
+import com.allsouls.newsapp.tracking.domain.TrackEvent
+import com.allsouls.newsapp.tracking.domain.TrackEventPort
 import kotlinx.android.synthetic.main.activity_headline.*
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
 
 class HeadlineActivity : AppCompatActivity(), HeadlineView {
 
     private val presenter: HeadlinePresenter by inject { parametersOf(this) }
+    private val trackEvent: TrackEventPort = TrackEvent(get())
+    private val controller = HeadlineController(trackEvent, get())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +35,12 @@ class HeadlineActivity : AppCompatActivity(), HeadlineView {
 
     override fun onResume() {
         super.onResume()
-        presenter.resume()
+        controller.resume()
+    }
+
+    override fun onDestroy() {
+        controller.destroy()
+        super.onDestroy()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
