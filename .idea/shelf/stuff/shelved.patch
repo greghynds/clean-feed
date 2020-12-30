@@ -1,0 +1,345 @@
+Index: core/src/main/java/gwh/xyz/core/arch/di/NetworkModule.kt
+===================================================================
+--- core/src/main/java/gwh/xyz/core/arch/di/NetworkModule.kt	(date 1587252894000)
++++ core/src/main/java/gwh/xyz/core/arch/di/NetworkModule.kt	(date 1587252894000)
+@@ -1,11 +0,0 @@
+-package gwh.xyz.core.arch.di
+-
+-import gwh.xyz.core.BuildConfig
+-import gwh.xyz.core.arch.data.ClientConfig
+-import org.koin.dsl.module
+-
+-val networkModule = module {
+-    val host =
+-        "https://raw.githubusercontent.com/bbc/news-and-weather-apps-coding-challenge-android/master/"
+-    single { ClientConfig(host, get(), loggingEnabled = BuildConfig.DEBUG) }
+-}
+\ No newline at end of file
+Index: tracking/src/main/java/gwh/xyz/tracking/data/TrackingService.kt
+===================================================================
+--- tracking/src/main/java/gwh/xyz/tracking/data/TrackingService.kt	(date 1587252894000)
++++ tracking/src/main/java/gwh/xyz/tracking/data/TrackingService.kt	(date 1587252894000)
+@@ -1,28 +0,0 @@
+-package gwh.xyz.tracking.data
+-
+-import gwh.xyz.core.arch.presentation.Dispatchers
+-import gwh.xyz.tracking.domain.Event
+-import gwh.xyz.tracking.domain.TrackEvent
+-import kotlinx.coroutines.*
+-import kotlin.coroutines.CoroutineContext
+-
+-class TrackingService(
+-    private val trackEvent: TrackEvent,
+-    private val dispatchers: Dispatchers
+-) : CoroutineScope {
+-
+-    private val job = Job()
+-
+-    override val coroutineContext: CoroutineContext
+-        get() = dispatchers.io + job + CoroutineExceptionHandler { _, _ ->
+-            GlobalScope.launch(dispatchers.io) { /* no op */ }
+-        }
+-
+-    fun track(event: Event) {
+-        io { trackEvent.send(event) }
+-    }
+-
+-    private fun io(block: suspend CoroutineScope.() -> Unit): Job {
+-        return launch(coroutineContext, CoroutineStart.DEFAULT, block)
+-    }
+-}
+\ No newline at end of file
+Index: app/src/main/java/gwh/xyz/cleanfeed/NetworkModule.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/gwh/xyz/cleanfeed/NetworkModule.kt	(date 1587312454000)
++++ app/src/main/java/gwh/xyz/cleanfeed/NetworkModule.kt	(date 1587312454000)
+@@ -0,0 +1,16 @@
++package gwh.xyz.cleanfeed
++
++import gwh.xyz.tracking.data.TrackingInterceptor
++import okhttp3.logging.HttpLoggingInterceptor
++import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
++import org.koin.core.qualifier.named
++import org.koin.dsl.module
++
++val networkModule = module {
++    single(named("host")) { "https://raw.githubusercontent.com/bbc/news-and-weather-apps-coding-challenge-android/master/" }
++    single {
++        listOf(
++            HttpLoggingInterceptor().apply { level = BASIC }
++        )
++    }
++}
+\ No newline at end of file
+Index: tracking/src/main/java/gwh/xyz/tracking/data/TrackingController.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- tracking/src/main/java/gwh/xyz/tracking/data/TrackingController.kt	(date 1587300455000)
++++ tracking/src/main/java/gwh/xyz/tracking/data/TrackingController.kt	(date 1587300455000)
+@@ -0,0 +1,18 @@
++package gwh.xyz.tracking.data
++
++import gwh.xyz.core.arch.adapter.Sender
++import gwh.xyz.core.arch.presentation.Dispatchers
++import gwh.xyz.tracking.domain.Event
++import gwh.xyz.tracking.domain.TrackEvent
++import gwh.xyz.tracking.domain.TrackEventPort
++import kotlinx.coroutines.launch
++
++class TrackingController(
++    private val trackEvent: TrackEventPort,
++    dispatchers: Dispatchers
++) : Sender(dispatchers) {
++
++    fun track(event: Event) = launch {
++        trackEvent.send(event)
++    }
++}
+\ No newline at end of file
+Index: tracking/src/test/java/gwh/xyz/tracking/data/TrackingServiceTest.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package gwh.xyz.tracking.data\n\nimport gwh.xyz.tracking.domain.Event\nimport gwh.xyz.tracking.domain.TrackEvent\nimport gwh.xyz.core.arch.util.TestDispatchers\nimport com.nhaarman.mockitokotlin2.mock\nimport kotlinx.coroutines.runBlocking\nimport org.junit.Test\nimport org.mockito.Mockito.verify\n\nclass TrackingServiceTest {\n\n    @Test\n    fun `should send tracking request when tracking event`() {\n        runBlocking {\n            val event = Event.NetworkRequest(100)\n            val trackEvent = mock<TrackEvent>()\n            val sut = TrackingService(trackEvent, TestDispatchers())\n\n            sut.track(event)\n\n            verify(trackEvent).send(event)\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- tracking/src/test/java/gwh/xyz/tracking/data/TrackingServiceTest.kt	(date 1587252894000)
++++ tracking/src/test/java/gwh/xyz/tracking/data/TrackingServiceTest.kt	(date 1587300455000)
+@@ -15,7 +15,7 @@
+         runBlocking {
+             val event = Event.NetworkRequest(100)
+             val trackEvent = mock<TrackEvent>()
+-            val sut = TrackingService(trackEvent, TestDispatchers())
++            val sut = TrackingController(trackEvent, TestDispatchers())
+ 
+             sut.track(event)
+ 
+Index: tracking/src/main/java/gwh/xyz/tracking/data/TrackingInterceptor.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package gwh.xyz.tracking.data\n\nimport gwh.xyz.tracking.domain.Event.NetworkRequest\nimport okhttp3.Interceptor\nimport okhttp3.Response\nimport okhttp3.ResponseBody\nimport org.koin.core.KoinComponent\nimport org.koin.core.inject\n\nclass TrackingInterceptor : Interceptor, KoinComponent {\n\n    private val tracking: TrackingService by inject()\n\n    override fun intercept(chain: Interceptor.Chain): Response {\n        val request = chain.request()\n        val startTime = System.currentTimeMillis()\n        val response = chain.proceed(request)\n        val endTime = System.currentTimeMillis()\n        val body = response.body()\n        val endpoint = response.request().url().pathSegments().last()\n        val bodyString = response.body()?.string()\n        val newBody = ResponseBody.create(body?.contentType(), bodyString?.toByteArray())\n        val newResponse = response.newBuilder().body(newBody).build()\n        val isTrackable = endpoint != ANALYTICS_ENDPOINT\n\n        if (isTrackable) {\n            val time = calculateResponseTime(startTime, endTime)\n            val event = NetworkRequest(time)\n            tracking.track(event)\n        }\n\n        return newResponse\n    }\n\n    private fun calculateResponseTime(startTime: Long, endTime: Long): Int {\n        return (endTime - startTime).toInt()\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- tracking/src/main/java/gwh/xyz/tracking/data/TrackingInterceptor.kt	(date 1587252894000)
++++ tracking/src/main/java/gwh/xyz/tracking/data/TrackingInterceptor.kt	(date 1587300455000)
+@@ -4,12 +4,10 @@
+ import okhttp3.Interceptor
+ import okhttp3.Response
+ import okhttp3.ResponseBody
+-import org.koin.core.KoinComponent
+-import org.koin.core.inject
+ 
+-class TrackingInterceptor : Interceptor, KoinComponent {
+-
+-    private val tracking: TrackingService by inject()
++class TrackingInterceptor(
++    private val controller: TrackingController
++) : Interceptor {
+ 
+     override fun intercept(chain: Interceptor.Chain): Response {
+         val request = chain.request()
+@@ -26,7 +24,7 @@
+         if (isTrackable) {
+             val time = calculateResponseTime(startTime, endTime)
+             val event = NetworkRequest(time)
+-            tracking.track(event)
++            controller.track(event)
+         }
+ 
+         return newResponse
+Index: app/src/main/java/gwh/xyz/cleanfeed/Dependencies.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package gwh.xyz.cleanfeed\n\nimport gwh.xyz.feed.di.feedModule\nimport gwh.xyz.core.arch.di.asyncModule\nimport gwh.xyz.core.arch.di.networkModule\nimport gwh.xyz.core.arch.di.serializationModule\nimport gwh.xyz.tracking.di.trackingModule\nimport org.koin.core.context.startKoin\nimport org.koin.core.context.stopKoin\n\nobject Dependencies {\n\n    private val modules = listOf(\n        asyncModule,\n        serializationModule,\n        trackingModule,\n        networkModule,\n        feedModule\n    )\n\n    fun inject() {\n        startKoin { modules(modules) }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/gwh/xyz/cleanfeed/Dependencies.kt	(date 1587252894000)
++++ app/src/main/java/gwh/xyz/cleanfeed/Dependencies.kt	(date 1587300310000)
+@@ -2,11 +2,9 @@
+ 
+ import gwh.xyz.feed.di.feedModule
+ import gwh.xyz.core.arch.di.asyncModule
+-import gwh.xyz.core.arch.di.networkModule
+ import gwh.xyz.core.arch.di.serializationModule
+ import gwh.xyz.tracking.di.trackingModule
+ import org.koin.core.context.startKoin
+-import org.koin.core.context.stopKoin
+ 
+ object Dependencies {
+ 
+Index: core/src/main/java/gwh/xyz/core/arch/data/Client.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package gwh.xyz.core.arch.data\n\nimport com.fasterxml.jackson.databind.ObjectMapper\nimport com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory\nimport okhttp3.OkHttpClient\nimport okhttp3.logging.HttpLoggingInterceptor\nimport okhttp3.logging.HttpLoggingInterceptor.Level.BASIC\nimport retrofit2.Retrofit\nimport retrofit2.converter.jackson.JacksonConverterFactory\n\ndata class ClientConfig(\n    val host: String,\n    val mapper: ObjectMapper,\n    val loggingEnabled: Boolean = false,\n    val trackingEnabled: Boolean = true\n)\n\ninline fun <reified Client> createApiClient(config: ClientConfig): Client {\n    val logging by lazy { HttpLoggingInterceptor().apply { level = BASIC } }\n\n    val client = with(config) {\n        OkHttpClient()\n            .newBuilder()\n//            .applyWhen(trackingEnabled) { addInterceptor(TrackingInterceptor()) }\n            .applyWhen(loggingEnabled) { addInterceptor(logging) }\n            .build()\n    }\n\n    return Retrofit.Builder()\n        .baseUrl(config.host)\n        .client(client)\n        .addCallAdapterFactory(CoroutineCallAdapterFactory())\n        .addConverterFactory(JacksonConverterFactory.create(config.mapper))\n        .build()\n        .create(Client::class.java)\n}\n\ninline fun <T> T.applyWhen(condition: Boolean, block: T.() -> Unit): T {\n    return if (condition) apply(block) else this\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- core/src/main/java/gwh/xyz/core/arch/data/Client.kt	(date 1587252894000)
++++ core/src/main/java/gwh/xyz/core/arch/data/Client.kt	(date 1587300455000)
+@@ -2,39 +2,28 @@
+ 
+ import com.fasterxml.jackson.databind.ObjectMapper
+ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
++import okhttp3.Interceptor
+ import okhttp3.OkHttpClient
+-import okhttp3.logging.HttpLoggingInterceptor
+-import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
+ import retrofit2.Retrofit
+ import retrofit2.converter.jackson.JacksonConverterFactory
+ 
+-data class ClientConfig(
+-    val host: String,
+-    val mapper: ObjectMapper,
+-    val loggingEnabled: Boolean = false,
+-    val trackingEnabled: Boolean = true
+-)
+-
+-inline fun <reified Client> createApiClient(config: ClientConfig): Client {
+-    val logging by lazy { HttpLoggingInterceptor().apply { level = BASIC } }
+-
+-    val client = with(config) {
+-        OkHttpClient()
+-            .newBuilder()
+-//            .applyWhen(trackingEnabled) { addInterceptor(TrackingInterceptor()) }
+-            .applyWhen(loggingEnabled) { addInterceptor(logging) }
+-            .build()
+-    }
+-
++inline fun <reified Client> createApiClient(
++    host: String,
++    mapper: ObjectMapper,
++    interceptors: List<Interceptor>
++): Client {
+     return Retrofit.Builder()
+-        .baseUrl(config.host)
+-        .client(client)
++        .baseUrl(host)
++        .client(createHttpClient(interceptors))
+         .addCallAdapterFactory(CoroutineCallAdapterFactory())
+-        .addConverterFactory(JacksonConverterFactory.create(config.mapper))
++        .addConverterFactory(JacksonConverterFactory.create(mapper))
+         .build()
+         .create(Client::class.java)
+ }
+ 
+-inline fun <T> T.applyWhen(condition: Boolean, block: T.() -> Unit): T {
+-    return if (condition) apply(block) else this
++fun createHttpClient(interceptors: List<Interceptor>): OkHttpClient {
++    return OkHttpClient()
++        .newBuilder()
++        .apply { interceptors.forEach { interceptor -> addInterceptor(interceptor) } }
++        .build()
+ }
+\ No newline at end of file
+Index: tracking/src/main/java/gwh/xyz/tracking/di/TrackingModule.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package gwh.xyz.tracking.di\n\nimport gwh.xyz.core.arch.data.createApiClient\nimport gwh.xyz.tracking.data.AnalyticsApi\nimport gwh.xyz.tracking.data.AnalyticsClient\nimport gwh.xyz.tracking.data.TrackingService\nimport gwh.xyz.tracking.domain.TrackEvent\nimport gwh.xyz.tracking.domain.Tracker\nimport org.koin.dsl.module\n\nval trackingModule = module {\n    single { createApiClient<AnalyticsClient>(get()) }\n    single<Tracker> { AnalyticsApi(get()) }\n    single { TrackEvent(get()) }\n    single { TrackingService(get(), get()) }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- tracking/src/main/java/gwh/xyz/tracking/di/TrackingModule.kt	(date 1587252894000)
++++ tracking/src/main/java/gwh/xyz/tracking/di/TrackingModule.kt	(date 1587300725000)
+@@ -3,14 +3,16 @@
+ import gwh.xyz.core.arch.data.createApiClient
+ import gwh.xyz.tracking.data.AnalyticsApi
+ import gwh.xyz.tracking.data.AnalyticsClient
+-import gwh.xyz.tracking.data.TrackingService
++import gwh.xyz.tracking.data.TrackingController
+ import gwh.xyz.tracking.domain.TrackEvent
++import gwh.xyz.tracking.domain.TrackEventPort
+ import gwh.xyz.tracking.domain.Tracker
++import org.koin.core.qualifier.named
+ import org.koin.dsl.module
+ 
+ val trackingModule = module {
+-    single { createApiClient<AnalyticsClient>(get()) }
++    single<AnalyticsClient> { createApiClient(get(named("host")), get(), get()) }
+     single<Tracker> { AnalyticsApi(get()) }
+     single { TrackEvent(get()) }
+-    single { TrackingService(get(), get()) }
++//    single { TrackingController(get(), get()) }
+ }
+\ No newline at end of file
+Index: feed/src/main/java/gwh/xyz/feed/di/FeedModule.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package gwh.xyz.feed.di\n\nimport gwh.xyz.core.arch.data.createApiClient\nimport gwh.xyz.feed.data.FeedApi\nimport gwh.xyz.feed.data.FeedClient\nimport gwh.xyz.feed.domain.FeedRepo\nimport gwh.xyz.feed.headline.presentation.HeadlineCardPresenter\nimport gwh.xyz.feed.headline.presentation.HeadlineCardView\nimport gwh.xyz.feed.headline.presentation.HeadlinePresenter\nimport gwh.xyz.feed.headline.presentation.HeadlineView\nimport org.koin.dsl.module\n\nval feedModule = module {\n    single<FeedClient> { createApiClient(get()) }\n    single<FeedRepo> { FeedApi(get()) }\n    factory { (view: HeadlineCardView) -> HeadlineCardPresenter(view) }\n    factory { (view: HeadlineView) -> HeadlinePresenter(view) }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- feed/src/main/java/gwh/xyz/feed/di/FeedModule.kt	(date 1587252894000)
++++ feed/src/main/java/gwh/xyz/feed/di/FeedModule.kt	(date 1587312202000)
+@@ -1,18 +1,25 @@
+ package gwh.xyz.feed.di
+ 
+ import gwh.xyz.core.arch.data.createApiClient
++import gwh.xyz.core.arch.domain.OutputPort
+ import gwh.xyz.feed.data.FeedApi
+ import gwh.xyz.feed.data.FeedClient
+ import gwh.xyz.feed.domain.FeedRepo
++import gwh.xyz.feed.domain.FetchFeed
++import gwh.xyz.feed.domain.FetchFeedPort
++import gwh.xyz.feed.domain.entity.Feed
+ import gwh.xyz.feed.headline.presentation.HeadlineCardPresenter
+ import gwh.xyz.feed.headline.presentation.HeadlineCardView
+ import gwh.xyz.feed.headline.presentation.HeadlinePresenter
+ import gwh.xyz.feed.headline.presentation.HeadlineView
++import org.koin.core.qualifier.named
+ import org.koin.dsl.module
+ 
+ val feedModule = module {
+-    single<FeedClient> { createApiClient(get()) }
++    single<FeedClient> { createApiClient(get(named("host")), get(), get()) }
+     single<FeedRepo> { FeedApi(get()) }
+     factory { (view: HeadlineCardView) -> HeadlineCardPresenter(view) }
+     factory { (view: HeadlineView) -> HeadlinePresenter(view) }
++
++    single<FetchFeedPort> { (output: OutputPort<Feed>) -> FetchFeed(get(), output) }
+ }
+\ No newline at end of file
+Index: feed/src/main/java/gwh/xyz/feed/ui/FeedActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package gwh.xyz.feed.ui\n\nimport android.os.Bundle\nimport android.view.View\nimport android.widget.Toast\nimport androidx.appcompat.app.AppCompatActivity\nimport androidx.recyclerview.widget.LinearLayoutManager\nimport gwh.xyz.feed.R\nimport gwh.xyz.feed.adapter.FeedController\nimport gwh.xyz.feed.adapter.FeedPresenter\nimport gwh.xyz.feed.adapter.FeedTrackingController\nimport gwh.xyz.feed.adapter.FeedView\nimport gwh.xyz.feed.domain.FetchFeed\nimport gwh.xyz.feed.domain.entity.Feed\nimport gwh.xyz.feed.ui.adapter.HeadlinesAdapter\nimport gwh.xyz.feed.headline.domain.entity.Headline\nimport gwh.xyz.feed.headline.ui.HeadlineActivity\nimport gwh.xyz.tracking.domain.TrackEvent\nimport kotlinx.android.synthetic.main.activity_feed.*\nimport org.koin.android.ext.android.get\n\nclass FeedActivity : AppCompatActivity(), FeedView {\n\n    private val presenter = FeedPresenter(this, get())\n    private val fetchFeed = FetchFeed(get(), presenter)\n    private val trackEvent = TrackEvent(get())\n    private val feedController = FeedController(fetchFeed, get())\n    private val trackingController = FeedTrackingController(trackEvent, get())\n\n    private lateinit var adapter: HeadlinesAdapter\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_feed)\n\n        configView()\n        bindActions()\n        fetchFeed()\n    }\n\n    override fun onResume() {\n        trackingController.resume()\n        super.onResume()\n    }\n\n    override fun onDestroy() {\n        feedController.destroy()\n        trackingController.destroy()\n        super.onDestroy()\n    }\n\n    override fun showLoading() {\n        headlinesProgress.visibility = View.VISIBLE\n        headlinesList.visibility = View.GONE\n    }\n\n    override fun showFeed(feed: Feed) {\n        headlinesList.visibility = View.VISIBLE\n        headlinesProgress.visibility = View.GONE\n\n        adapter = createAdapter(feed)\n        headlinesList.adapter = adapter\n        headlinesList.layoutManager = LinearLayoutManager(this)\n    }\n\n    override fun showError(error: Throwable) {\n        headlinesList.visibility = View.VISIBLE\n        headlinesProgress.visibility = View.GONE\n\n        Toast.makeText(this, \"Couldn't load feed.\", Toast.LENGTH_SHORT).show()\n    }\n\n    override fun showDetail(headline: Headline) {\n        startActivity(HeadlineActivity.intent(this, headline))\n    }\n\n    private fun configView() {\n        swipeToRefresh.setColorSchemeResources(R.color.colorAccent)\n    }\n\n    private fun bindActions() {\n        swipeToRefresh.apply {\n            setOnRefreshListener {\n                fetchFeed()\n                isRefreshing = false\n            }\n        }\n    }\n\n    private fun createAdapter(feed: Feed): HeadlinesAdapter {\n        return HeadlinesAdapter(\n            feed.headlines,\n            onItemClick = { headline -> presenter.selectHeadline(headline) }\n        )\n    }\n\n    private fun fetchFeed() {\n        feedController.fetchFeed()\n        presenter.loading()\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- feed/src/main/java/gwh/xyz/feed/ui/FeedActivity.kt	(date 1587252894000)
++++ feed/src/main/java/gwh/xyz/feed/ui/FeedActivity.kt	(date 1587312298000)
+@@ -10,22 +10,22 @@
+ import gwh.xyz.feed.adapter.FeedPresenter
+ import gwh.xyz.feed.adapter.FeedTrackingController
+ import gwh.xyz.feed.adapter.FeedView
+-import gwh.xyz.feed.domain.FetchFeed
++import gwh.xyz.feed.domain.FetchFeedPort
+ import gwh.xyz.feed.domain.entity.Feed
+-import gwh.xyz.feed.ui.adapter.HeadlinesAdapter
+ import gwh.xyz.feed.headline.domain.entity.Headline
+ import gwh.xyz.feed.headline.ui.HeadlineActivity
+-import gwh.xyz.tracking.domain.TrackEvent
++import gwh.xyz.feed.ui.adapter.HeadlinesAdapter
+ import kotlinx.android.synthetic.main.activity_feed.*
+ import org.koin.android.ext.android.get
++import org.koin.android.ext.android.inject
++import org.koin.core.parameter.parametersOf
+ 
+ class FeedActivity : AppCompatActivity(), FeedView {
+ 
+     private val presenter = FeedPresenter(this, get())
+-    private val fetchFeed = FetchFeed(get(), presenter)
+-    private val trackEvent = TrackEvent(get())
++    private val fetchFeed: FetchFeedPort by inject { parametersOf(presenter) }
+     private val feedController = FeedController(fetchFeed, get())
+-    private val trackingController = FeedTrackingController(trackEvent, get())
++    private val trackingController = FeedTrackingController(get(), get())
+ 
+     private lateinit var adapter: HeadlinesAdapter
+ 
