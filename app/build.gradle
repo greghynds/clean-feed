@@ -54,6 +54,7 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
 
+    testImplementation 'com.github.writethemfirst:approvals-java:0.13.0'
     testImplementation 'junit:junit:4.12'
     testImplementation "org.assertj:assertj-core:3.15.0"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
