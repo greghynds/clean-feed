@@ -9,7 +9,7 @@ import retrofit2.Response
 import kotlin.Result.Companion.success
 
 
-class ApiAdapterTest {
+class ApiMappingTest {
 
     @Test
     fun `should return result when response is successful`() {

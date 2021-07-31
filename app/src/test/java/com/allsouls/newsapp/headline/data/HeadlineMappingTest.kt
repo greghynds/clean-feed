@@ -4,7 +4,7 @@ import com.allsouls.newsapp.headline.data.dto.HeadlineDto
 import com.github.writethemfirst.approvals.Approvals.verify
 import org.junit.Test
 
-class HeadlineAdaptersTest {
+class HeadlineMappingTest {
 
     @Test
     fun `maps all fields when converting headline response to headline entity`() {

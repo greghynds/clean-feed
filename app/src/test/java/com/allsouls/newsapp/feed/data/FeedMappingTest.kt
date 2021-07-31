@@ -6,7 +6,7 @@ import com.github.writethemfirst.approvals.Approvals.verify
 import org.junit.Test
 
 
-class FeedAdaptersTest {
+class FeedMappingTest {
 
     @Test
     fun `maps all fields when converting feed response to feed entity`() {
