@@ -1,6 +1,5 @@
 package com.allsouls.newsapp.arch.data
 
-import com.allsouls.newsapp.tracking.data.TrackingInterceptor
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
@@ -22,7 +21,6 @@ inline fun <reified Client> createApiClient(config: ClientConfig): Client {
     val client = with(config) {
         OkHttpClient()
             .newBuilder()
-            .applyWhen(trackingEnabled) { addInterceptor(TrackingInterceptor()) }
             .applyWhen(loggingEnabled) { addInterceptor(logging) }
             .build()
     }
