@@ -13,7 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner
 class TrackingServiceTest {
 
     @Test
-    fun `should send tracking request when tracking event`() {
+    fun `sends tracking request when tracking event`() {
         runBlocking {
             val event = Event.NetworkRequest(100)
             val trackEvent = mock<TrackEvent>()

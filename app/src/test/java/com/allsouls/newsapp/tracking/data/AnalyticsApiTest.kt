@@ -14,7 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner
 class AnalyticsApiTest {
 
     @Test
-    fun `should return success when event tracked successfully`() {
+    fun `returns success when event tracked successfully`() {
         runBlocking {
             val time = 100
             val event = Event.NetworkRequest(time)
@@ -30,7 +30,7 @@ class AnalyticsApiTest {
     }
 
     @Test
-    fun `should return error when tracking event failed`() {
+    fun `returns error when tracking event failed`() {
         runBlocking {
             val time = 100
             val event = Event.NetworkRequest(time)

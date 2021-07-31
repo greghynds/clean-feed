@@ -12,7 +12,7 @@ import kotlin.Result.Companion.success
 class ApiMappingTest {
 
     @Test
-    fun `should return result when response is successful`() {
+    fun `returns result when response is successful`() {
         val data = "xxx"
         val response = Response.success(data)
 
@@ -22,7 +22,7 @@ class ApiMappingTest {
     }
 
     @Test
-    fun `should return error when response is not successful`() {
+    fun `returns error when response is not successful`() {
         val code = 500
         val message = "Error"
         val body = ResponseBody.create(MediaType.parse("application/json; charset=UTF-8"), message)

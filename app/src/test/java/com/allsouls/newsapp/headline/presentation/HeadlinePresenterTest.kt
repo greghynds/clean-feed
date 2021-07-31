@@ -13,7 +13,7 @@ import java.util.*
 class HeadlinePresenterTest {
 
     @Test
-    fun `should set title when rendering headline`() {
+    fun `sets title when rendering headline`() {
         val title = "title"
         val headline = createHeadline(title)
         val view = mock<HeadlineView>()
@@ -25,7 +25,7 @@ class HeadlinePresenterTest {
     }
 
     @Test
-    fun `should set date when rendering headline`() {
+    fun `sets date when rendering headline`() {
         val timestamp = 1574706996877
         val date = Date(timestamp)
         val headline = createHeadline(updated = date)
@@ -38,7 +38,7 @@ class HeadlinePresenterTest {
     }
 
     @Test
-    fun `should set introduction when rendering headline`() {
+    fun `sets introduction when rendering headline`() {
         val introduction = "introduction"
         val headline = createHeadline(introduction = introduction)
         val view = mock<HeadlineView>()

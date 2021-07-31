@@ -7,7 +7,7 @@ import java.util.Date
 class DateFormattingTest {
 
     @Test
-    fun `should create date from unix timestamp`() {
+    fun `creates date from unix timestamp`() {
         val timestamp = 1448401928L
         val date = Date().apply { time = timestamp * 1000 }
 
@@ -17,7 +17,7 @@ class DateFormattingTest {
     }
 
     @Test
-    fun `should format date to readable string`() {
+    fun `formats date to readable string`() {
         val timestamp = 1448401928L
         val date = dateFromTimestamp(timestamp)
 

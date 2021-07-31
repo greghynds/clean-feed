@@ -10,7 +10,7 @@ import java.util.*
 class HeadlineCardPresenterTest {
 
     @Test
-    fun `should set title when binding headline`() {
+    fun `sets title when binding headline`() {
         val title = "title"
         val headline = createHeadline(title = title)
         val view = mock<HeadlineCardView>()
@@ -22,7 +22,7 @@ class HeadlineCardPresenterTest {
     }
 
     @Test
-    fun `should set formatted date when binding headline`() {
+    fun `sets formatted date when binding headline`() {
         val timestamp = 1574706996877
         val date = Date(timestamp)
         val headline = createHeadline(updated = date)
