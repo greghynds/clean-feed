@@ -7,7 +7,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.recyclerview.widget.RecyclerView
 import com.allsouls.newsapp.feed.ui.view.HeadlineCard
 import com.allsouls.newsapp.headline.domain.entity.Headline
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 
 class HeadlinesAdapter(
     private val data: List<Headline>,
