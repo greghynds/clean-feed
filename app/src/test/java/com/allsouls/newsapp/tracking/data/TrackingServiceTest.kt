@@ -24,4 +24,4 @@ class TrackingServiceTest {
             verify(trackEvent).execute(event)
         }
     }
-}
+}   
