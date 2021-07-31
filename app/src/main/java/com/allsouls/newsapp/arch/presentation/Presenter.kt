@@ -2,6 +2,7 @@ package com.allsouls.newsapp.arch.presentation
 
 
 
+import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -11,12 +12,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-abstract class Presenter(private val dispatchers: Dispatchers) : CoroutineScope {
+abstract class Presenter(private val dispatchers: Dispatchers) : CoroutineScope, ViewModel() {
 
     private val job = Job()
 
     protected open fun onCoroutineError(error: Throwable) {
-        // override for debugging
+        // override for handling coroutine exceptions
     }
 
     override val coroutineContext: CoroutineContext
@@ -38,7 +39,7 @@ abstract class Presenter(private val dispatchers: Dispatchers) : CoroutineScope 
         withContext(dispatchers.io, block)
 
     /**
-     *  Executes the [block] in a coroutine that runs in the IO context.
+     * Launches a coroutine that runs in the IO context.
      *
      * This should be used for background tasks that don't need to
      * post a result back to the UI.
