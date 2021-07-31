@@ -1,15 +1,8 @@
 package com.allsouls.newsapp.arch.presentation
 
 
-
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 abstract class Presenter(private val dispatchers: Dispatchers) : CoroutineScope, ViewModel() {
@@ -20,6 +13,7 @@ abstract class Presenter(private val dispatchers: Dispatchers) : CoroutineScope,
         // override for handling coroutine exceptions
     }
 
+    @DelicateCoroutinesApi
     override val coroutineContext: CoroutineContext
         get() = dispatchers.main + job + CoroutineExceptionHandler { _, error ->
             GlobalScope.launch(dispatchers.main) { onCoroutineError(error) }

@@ -9,8 +9,8 @@ import com.allsouls.newsapp.headline.domain.entity.Headline
 import com.allsouls.newsapp.headline.presentation.HeadlineCardPresenter
 import com.allsouls.newsapp.headline.presentation.HeadlineCardView
 import kotlinx.android.synthetic.main.layout_headline_card.view.*
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 
 
