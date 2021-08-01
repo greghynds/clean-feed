@@ -2,21 +2,19 @@ package com.allsouls.newsapp.arch.presentation
 
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-abstract class Presenter(private val dispatchers: Dispatchers) : CoroutineScope, ViewModel() {
-
-    private val job = Job()
+abstract class Model(private val dispatchers: Dispatchers) : CoroutineScope, ViewModel() {
 
     protected open fun onCoroutineError(error: Throwable) {
         // override for handling coroutine exceptions
     }
 
-    @DelicateCoroutinesApi
     override val coroutineContext: CoroutineContext
-        get() = dispatchers.main + job + CoroutineExceptionHandler { _, error ->
-            GlobalScope.launch(dispatchers.main) { onCoroutineError(error) }
+        get() = dispatchers.main + CoroutineExceptionHandler { _, error ->
+            viewModelScope.launch(dispatchers.main) { onCoroutineError(error) }
         }
 
     /**
@@ -40,9 +38,4 @@ abstract class Presenter(private val dispatchers: Dispatchers) : CoroutineScope,
      */
     fun CoroutineScope.background(block: suspend CoroutineScope.() -> Unit): Job =
         launch(dispatchers.io, CoroutineStart.DEFAULT, block)
-
-    /**
-     * Cancels all running jobs.
-     */
-    fun destroy() = job.cancel()
 }

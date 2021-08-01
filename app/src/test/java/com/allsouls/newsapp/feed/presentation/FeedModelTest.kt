@@ -1,5 +1,7 @@
 package com.allsouls.newsapp.feed.presentation
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Observer
 import com.allsouls.newsapp.arch.data.ApiError
 import com.allsouls.newsapp.arch.domain.Params
 import com.allsouls.newsapp.arch.presentation.dateFromTimestamp
@@ -9,6 +11,9 @@ import com.allsouls.newsapp.headline.domain.entity.Headline
 import com.allsouls.newsapp.util.TestDispatchers
 import com.nhaarman.mockitokotlin2.mock
 import kotlinx.coroutines.runBlocking
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.verify
@@ -16,25 +21,36 @@ import java.util.*
 import kotlin.Result.Companion.failure
 import kotlin.Result.Companion.success
 
-class FeedPresenterTest {
+class FeedModelTest {
+
+    @get:Rule
+    val rule = InstantTaskExecutorRule()
+
+    private val fetchFeed = mock<FetchFeed>()
+    private val sut = createViewModel(mock(), fetchFeed)
+    private val observer = mock<Observer<FeedState>>()
+
+    @Before
+    fun `start observing`() {
+        sut.state.observeForever(observer)
+    }
+
+    @After
+    fun `stop observing`() {
+        sut.state.removeObserver(observer)
+    }
 
     @Test
     fun `shows feed when feed loaded successfully`() {
         runBlocking {
-            val text = "headline"
-            val updateDateTs = 1448401928L
-            val updateDate = Date(updateDateTs)
-            val introduction = "introduction"
-            val headline = Headline(text, updateDate, introduction)
-            val feed = Feed(listOf(headline))
-            val fetchFeed = mock<FetchFeed>()
-            val view = mock<FeedView>()
-            val sut = createPresenter(view, fetchFeed)
+            val headlines = listOf(Headline("headline", Date(1448401928L), "introduction"))
+            val state = FeedState(headlines)
+            val feed = Feed(headlines)
             given(fetchFeed.execute(Params.None)).willReturn(success(feed))
 
             sut.load()
 
-            verify(view).showFeed(feed)
+            verify(observer).onChanged(state)
         }
     }
 
@@ -53,7 +69,7 @@ class FeedPresenterTest {
             )
             val fetchFeed = mock<FetchFeed>()
             val view = mock<FeedView>()
-            val sut = createPresenter(view, fetchFeed)
+            val sut = createViewModel(view, fetchFeed)
             given(fetchFeed.execute(Params.None)).willReturn(success(feed))
 
             sut.load()
@@ -68,7 +84,7 @@ class FeedPresenterTest {
             val error = ApiError(500, "Couldn't load feed.")
             val fetchFeed = mock<FetchFeed>()
             val view = mock<FeedView>()
-            val sut = createPresenter(view, fetchFeed)
+            val sut = createViewModel(view, fetchFeed)
             given(fetchFeed.execute(Params.None)).willReturn(failure(error))
 
             sut.load()
@@ -86,7 +102,7 @@ class FeedPresenterTest {
                 "introduction"
             )
             val view = mock<FeedView>()
-            val sut = createPresenter(view)
+            val sut = createViewModel(view)
 
             sut.selectHeadline(headline)
 
@@ -98,7 +114,7 @@ class FeedPresenterTest {
     fun `shows loading indicator when fetching feed`() {
         runBlocking {
             val view = mock<FeedView>()
-            val sut = createPresenter(view)
+            val sut = createViewModel(view)
 
             sut.load()
 
@@ -106,10 +122,12 @@ class FeedPresenterTest {
         }
     }
 
-    private fun createPresenter(view: FeedView, fetchFeed: FetchFeed = mock()): FeedPresenter {
-        return FeedPresenter(
+    private fun createViewModel(
+        view: FeedView,
+        fetchFeed: FetchFeed = mock()
+    ): FeedModel {
+        return FeedModel(
             fetchFeed,
-            mock(),
             TestDispatchers(),
             view
         )

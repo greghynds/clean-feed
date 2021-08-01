@@ -1,7 +1,7 @@
 package com.allsouls.newsapp.headline.presentation
 
 import com.allsouls.newsapp.arch.presentation.Dispatchers
-import com.allsouls.newsapp.arch.presentation.Presenter
+import com.allsouls.newsapp.arch.presentation.Model
 import com.allsouls.newsapp.arch.presentation.formatDate
 import com.allsouls.newsapp.headline.domain.entity.Headline
 import com.allsouls.newsapp.tracking.domain.Event
@@ -11,7 +11,7 @@ class HeadlinePresenter(
     private val trackEvent: TrackEvent,
     dispatchers: Dispatchers,
     private val view: HeadlineView
-) : Presenter(dispatchers) {
+) : Model(dispatchers) {
 
     fun render(headline: Headline) {
         view.setTitle(headline.headline)

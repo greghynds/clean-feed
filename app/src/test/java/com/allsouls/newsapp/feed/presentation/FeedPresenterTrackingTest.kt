@@ -18,16 +18,15 @@ class FeedPresenterTrackingTest {
             val trackEvent = mock<TrackEvent>()
             val sut = createPresenter(trackEvent)
 
-            sut.resume()
+//            sut.resume()
 
             verify(trackEvent).execute(event)
         }
     }
 
-    private fun createPresenter(trackEvent: TrackEvent): FeedPresenter {
-        return FeedPresenter(
+    private fun createPresenter(trackEvent: TrackEvent): FeedModel {
+        return FeedModel(
             mock(),
-            trackEvent,
             TestDispatchers(),
             mock()
         )

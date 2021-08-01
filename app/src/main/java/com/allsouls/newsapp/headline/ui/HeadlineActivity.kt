@@ -24,7 +24,7 @@ class HeadlineActivity : AppCompatActivity(), HeadlineView {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val headline = intent.getParcelableExtra<Headline>(KEY_HEADLINE)
-        presenter.render(headline)
+        presenter.render(headline!!)
     }
 
     override fun onResume() {
