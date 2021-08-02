@@ -128,8 +128,7 @@ class FeedModelTest {
     ): FeedModel {
         return FeedModel(
             fetchFeed,
-            TestDispatchers(),
-            view
+            TestDispatchers()
         )
     }
 

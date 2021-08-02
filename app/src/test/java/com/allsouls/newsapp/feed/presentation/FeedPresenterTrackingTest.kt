@@ -27,8 +27,7 @@ class FeedPresenterTrackingTest {
     private fun createPresenter(trackEvent: TrackEvent): FeedModel {
         return FeedModel(
             mock(),
-            TestDispatchers(),
-            mock()
+            TestDispatchers()
         )
     }
 }

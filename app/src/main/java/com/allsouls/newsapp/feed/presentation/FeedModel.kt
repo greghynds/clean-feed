@@ -1,47 +1,48 @@
 package com.allsouls.newsapp.feed.presentation
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.allsouls.newsapp.arch.domain.Params
+import com.allsouls.newsapp.arch.presentation.Action
 import com.allsouls.newsapp.arch.presentation.Dispatchers
 import com.allsouls.newsapp.feed.domain.FetchFeed
-import com.allsouls.newsapp.feed.domain.entity.Feed
 import com.allsouls.newsapp.headline.domain.entity.Headline
 import com.allsouls.newsapp.headline.ui.createHeadlineRoute
-import com.gwh.routes.Route
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 class FeedModel(
     private val fetchFeed: FetchFeed,
-    private val dispatchers: Dispatchers,
-    private val view: FeedView
-) : Model<FeedState>() {
+    dispatchers: Dispatchers,
+) : Model<FeedState>(dispatchers) {
 
-    override val state = MutableLiveData(FeedState(listOf()))
-    override val routes = MutableLiveData<Route>()
+    override val state = MutableLiveData(FeedState.empty())
 
-    fun load() {
-        viewModelScope.launch(dispatchers.main) {
-            withContext(dispatchers.io) { fetchFeed.execute(Params.None) }
-                .fold(::fetchFeedSuccess, ::fetchFeedFailure)
+    override fun send(action: Action) = with(action) {
+        when (type) {
+            LOAD_FEED -> loadFeed()
+            SELECT_HEADLINE -> selectHeadline(payload as Headline)
         }
     }
 
-    fun selectHeadline(headline: Headline) {
-        routes.value = createHeadlineRoute(headline)
+    override fun onCoroutineError(error: Throwable) {
+        emit(FeedState.error(error))
     }
 
-    private fun fetchFeedSuccess(feed: Feed) {
-        state.value = FeedState(sortByDate(feed.headlines))
+    private fun loadFeed() {
+        emit(FeedState.loading())
+
+        main {
+            emit(FeedState.from(
+                io { fetchFeed.execute(Params.None) }
+            ))
+        }
     }
 
-    private fun fetchFeedFailure(error: Throwable) {
-        view.showError(error)
+    private fun selectHeadline(headline: Headline) {
+        navigateTo(createHeadlineRoute(headline))
     }
 
-    private fun sortByDate(headlines: List<Headline>): List<Headline> {
-        return headlines.sortedByDescending(Headline::updated)
+    companion object {
+        const val LOAD_FEED = "LOAD_FEED"
+        const val SELECT_HEADLINE = "SELECT_HEADLINE"
     }
 }

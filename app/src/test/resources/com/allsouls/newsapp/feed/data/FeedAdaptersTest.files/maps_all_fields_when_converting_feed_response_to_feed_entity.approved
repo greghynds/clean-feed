@@ -1,1 +1,4 @@
 Feed(headlines=[Headline(headline=headline, updated=Tue Nov 24 21:52:08 GMT 2015, introduction=introduction)])
+
+
+in the near future, that would make sense, so that we don't run into this problem again - if we’re looking to get this out quickly and we're not expecting the segmentation id to change again before we complete that work, then swapping out the id is a one-liner
