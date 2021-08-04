@@ -17,7 +17,7 @@ abstract class Model<State>(private val dispatchers: Dispatchers) : ViewModel() 
 
     open fun onCoroutineError(error: Throwable) { /* override me */ }
 
-    protected fun render(newState: State) {
+    protected fun emit(newState: State) {
         state.value = newState
     }
 
