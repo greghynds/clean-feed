@@ -1,89 +1,27 @@
 package com.allsouls.newsapp.feed.ui
 
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.allsouls.newsapp.R
-import com.allsouls.newsapp.feed.domain.entity.Feed
-import com.allsouls.newsapp.feed.presentation.FeedPresenter
-import com.allsouls.newsapp.feed.presentation.FeedView
-import com.allsouls.newsapp.feed.ui.adapter.HeadlinesAdapter
-import com.allsouls.newsapp.headline.domain.entity.Headline
-import com.allsouls.newsapp.headline.ui.HeadlineActivity
-import kotlinx.android.synthetic.main.activity_feed.*
+import androidx.compose.material.MaterialTheme
+import com.allsouls.newsapp.feed.presentation.FeedModel
+import com.allsouls.newsapp.feed.presentation.createLoadFeedAction
+import com.allsouls.newsapp.feed.ui.composable.FeedUi
 import org.koin.android.ext.android.inject
-import org.koin.core.parameter.parametersOf
 
-class FeedActivity : AppCompatActivity(), FeedView {
+class FeedActivity : AppCompatActivity() {
 
-    private val presenter: FeedPresenter by inject { parametersOf(this) }
-
-    private lateinit var adapter: HeadlinesAdapter
+    private val model: FeedModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_feed)
 
-        configView()
-        bindActions()
-
-        presenter.load()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        presenter.resume()
-    }
-
-    override fun onDestroy() {
-        presenter.destroy()
-        super.onDestroy()
-    }
-
-    override fun showLoading() {
-        headlinesProgress.visibility = View.VISIBLE
-        headlinesList.visibility = View.GONE
-    }
-
-    override fun showFeed(feed: Feed) {
-        headlinesList.visibility = View.VISIBLE
-        headlinesProgress.visibility = View.GONE
-
-        adapter = createAdapter(feed)
-        headlinesList.adapter = adapter
-        headlinesList.layoutManager = LinearLayoutManager(this)
-    }
-
-    override fun showError(error: Throwable) {
-        headlinesList.visibility = View.VISIBLE
-        headlinesProgress.visibility = View.GONE
-
-        Toast.makeText(this, "Couldn't load feed.", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showDetail(headline: Headline) {
-        startActivity(HeadlineActivity.intent(this, headline))
-    }
-
-    private fun configView() {
-        swipeToRefresh.setColorSchemeResources(R.color.colorAccent)
-    }
-
-    private fun bindActions() {
-        swipeToRefresh.apply {
-            setOnRefreshListener {
-                presenter.load()
-                isRefreshing = false
+        setContent {
+            MaterialTheme {
+                FeedUi(model)
             }
         }
-    }
 
-    private fun createAdapter(feed: Feed): HeadlinesAdapter {
-        return HeadlinesAdapter(
-            feed.headlines,
-            onItemClick = { headline -> presenter.selectHeadline(headline) }
-        )
+        model.send(createLoadFeedAction())
     }
 }
