@@ -1,5 +1,6 @@
 package com.allsouls.newsapp.feed.presentation
 
+import com.allsouls.newsapp.arch.presentation.dateFromTimestamp
 import com.allsouls.newsapp.feed.domain.entity.Feed
 import com.allsouls.newsapp.headline.domain.entity.Headline
 import org.assertj.core.api.Assertions.assertThat
@@ -67,9 +68,19 @@ class FeedStateTest {
 
     @Test
     fun `creates state from feed entity`() {
-        val headline = Headline("headline", Date(), "introduction")
-        val feed = Feed(listOf(headline))
-        val expected = FeedState(listOf(headline), null, false)
+        val feed = Feed(
+            listOf(
+                createHeadline(updated = dateFromTimestamp(1448601928)),
+                createHeadline(updated = dateFromTimestamp(1459709926)),
+                createHeadline(updated = dateFromTimestamp(1448401928L))
+            )
+        )
+        val sorted = listOf(
+            createHeadline(updated = dateFromTimestamp(1459709926)),
+            createHeadline(updated = dateFromTimestamp(1448601928)),
+            createHeadline(updated = dateFromTimestamp(1448401928L))
+        )
+        val expected = FeedState(sorted, null, false)
 
         val result = FeedState.from(feed)
 
@@ -95,5 +106,13 @@ class FeedStateTest {
         val result = FeedState.from(failure(error))
 
         assertThat(result).isEqualTo(expected)
+    }
+
+    private fun createHeadline(
+        title: String = "title",
+        updated: Date = Date(),
+        introduction: String = "introduction"
+    ): Headline {
+        return Headline(title, updated, introduction)
     }
 }
