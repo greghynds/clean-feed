@@ -27,11 +27,6 @@ class HeadlineActivity : AppCompatActivity(), HeadlineView {
         presenter.render(headline)
     }
 
-    override fun onResume() {
-        super.onResume()
-        presenter.resume()
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {

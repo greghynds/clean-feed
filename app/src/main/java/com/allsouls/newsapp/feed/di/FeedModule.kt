@@ -18,5 +18,5 @@ val feedModule = module {
     single { FetchFeed(get()) }
     factory { FeedModel(get(), get()) }
     factory { (view: HeadlineCardView) -> HeadlineCardPresenter(view) }
-    factory { (view: HeadlineView) -> HeadlinePresenter(get(), get(), view) }
+    factory { (view: HeadlineView) -> HeadlinePresenter(view) }
 }
