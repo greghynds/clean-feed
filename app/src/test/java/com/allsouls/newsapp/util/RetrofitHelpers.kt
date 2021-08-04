@@ -2,7 +2,7 @@ package com.allsouls.newsapp.util
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody
 import retrofit2.Response
 
@@ -17,7 +17,7 @@ fun <T> createErrorResponse(message: String, status: Int = 500): Response<T> {
 }
 
 fun createResponseBody(body: String): ResponseBody {
-    return ResponseBody.create(MediaType.parse(MEDIA_TYPE), body)
+    return ResponseBody.create(MEDIA_TYPE.toMediaTypeOrNull(), body)
 }
 
 fun <T> successResponse(body: T): Deferred<Response<T>> {
