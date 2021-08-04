@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
 import com.allsouls.newsapp.feed.presentation.FeedModel
 import com.allsouls.newsapp.feed.presentation.createLoadFeedAction
-import com.allsouls.newsapp.feed.ui.composable.FeedUi
 import org.koin.android.ext.android.inject
 
 class FeedActivity : AppCompatActivity() {

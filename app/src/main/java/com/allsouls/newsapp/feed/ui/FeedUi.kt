@@ -1,4 +1,4 @@
-package com.allsouls.newsapp.feed.ui.composable
+package com.allsouls.newsapp.feed.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.allsouls.newsapp.feed.presentation.FeedModel
 import com.allsouls.newsapp.feed.presentation.FeedState
+import com.allsouls.newsapp.feed.ui.HeadlinesList
 
 
 @Composable

@@ -1,4 +1,4 @@
-package com.allsouls.newsapp.feed.ui.composable
+package com.allsouls.newsapp.feed.ui
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
