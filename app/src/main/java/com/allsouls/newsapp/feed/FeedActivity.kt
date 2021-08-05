@@ -1,14 +1,18 @@
-package com.allsouls.newsapp.feed.ui
+package com.allsouls.newsapp.feed
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
+import com.allsouls.newsapp.feed.presentation.FeedDelegate
 import com.allsouls.newsapp.feed.presentation.FeedModel
 import com.allsouls.newsapp.feed.presentation.createLoadFeedAction
+import com.allsouls.newsapp.feed.presentation.createSelectHeadlineAction
+import com.allsouls.newsapp.feed.ui.FeedUi
+import com.allsouls.newsapp.headline.domain.entity.Headline
 import org.koin.android.ext.android.inject
 
-class FeedActivity : AppCompatActivity() {
+class FeedActivity : AppCompatActivity(), FeedDelegate {
 
     private val model: FeedModel by inject()
 
@@ -17,10 +21,14 @@ class FeedActivity : AppCompatActivity() {
 
         setContent {
             MaterialTheme {
-                FeedUi(model)
+                FeedUi(model, this)
             }
         }
 
         model.send(createLoadFeedAction())
+    }
+
+    override fun onHeadlineClick(headline: Headline) {
+        model.send(createSelectHeadlineAction(headline))
     }
 }
