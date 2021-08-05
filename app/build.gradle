@@ -41,8 +41,17 @@ android {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
+    composeOptions {
+        kotlinCompilerVersion "1.5.21"
+        kotlinCompilerExtensionVersion "1.0.1"
+    }
+
     buildFeatures {
         compose true
+    }
+
+    lintOptions {
+        abortOnError false
     }
 }
 
@@ -63,14 +72,14 @@ dependencies {
     implementation 'io.insert-koin:koin-android:3.1.2'
     implementation "androidx.recyclerview:recyclerview:1.2.1"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'androidx.compose.ui:ui:1.0.0'
-    implementation 'androidx.compose.ui:ui-tooling:1.0.0'
-    implementation 'androidx.compose.foundation:foundation:1.0.0'
-    implementation 'androidx.compose.material:material:1.0.0'
-    implementation "androidx.compose.runtime:runtime-rxjava3:1.0.0"
+    implementation 'androidx.compose.ui:ui:1.0.1'
+    implementation 'androidx.compose.ui:ui-tooling:1.0.1'
+    implementation 'androidx.compose.foundation:foundation:1.0.1'
+    implementation 'androidx.compose.material:material:1.0.1'
+    implementation "androidx.compose.runtime:runtime-rxjava3:1.0.1"
     implementation 'androidx.activity:activity-compose:1.3.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07'
-    implementation 'androidx.compose.runtime:runtime-livedata:1.0.0'
+    implementation 'androidx.compose.runtime:runtime-livedata:1.0.1'
     implementation 'com.github.greghynds:routes:1.0.0'
 
     testImplementation 'com.github.writethemfirst:approvals-java:0.12.0'
