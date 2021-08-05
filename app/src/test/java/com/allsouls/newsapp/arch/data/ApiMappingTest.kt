@@ -1,7 +1,7 @@
 package com.allsouls.newsapp.arch.data
 
 
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody
 import org.assertj.core.api.Java6Assertions.assertThat
 import org.junit.Test
@@ -25,7 +25,7 @@ class ApiMappingTest {
     fun `returns error when response is not successful`() {
         val code = 500
         val message = "Error"
-        val body = ResponseBody.create(MediaType.parse("application/json; charset=UTF-8"), message)
+        val body = ResponseBody.create("application/json; charset=UTF-8".toMediaTypeOrNull(), message)
         val response = Response.error<String>(code, body)
 
         val result = response.toResult()
