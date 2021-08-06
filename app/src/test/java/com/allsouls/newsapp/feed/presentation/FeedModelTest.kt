@@ -26,7 +26,7 @@ class FeedModelTest {
     val rule = InstantTaskExecutorRule()
 
     private val fetchFeed = mock<FetchFeed>()
-    private val sut = createViewModel(fetchFeed)
+    private val sut = FeedModel(fetchFeed, TestDispatchers())
     private val observer = mock<Observer<FeedState>>()
 
     @Before
@@ -52,7 +52,7 @@ class FeedModelTest {
     }
 
     @Test
-    fun `emits state with list of headlines when fetch successful `() {
+    fun `emits state with list of headlines when fetch successful`() {
         runBlocking {
             val headlines = listOf(Headline("headline", Date(1448401928L), "introduction"))
             val state = FeedState(headlines)
@@ -67,7 +67,7 @@ class FeedModelTest {
     }
 
     @Test
-    fun `emits error state when fetch failed `() {
+    fun `emits error state when fetch failed`() {
         runBlocking {
             val error = ApiError(404, "Not found")
             val state = FeedState(error = error)
@@ -78,14 +78,5 @@ class FeedModelTest {
 
             verify(observer).onChanged(state)
         }
-    }
-
-    private fun createViewModel(
-        fetchFeed: FetchFeed = mock()
-    ): FeedModel {
-        return FeedModel(
-            fetchFeed,
-            TestDispatchers()
-        )
     }
 }
