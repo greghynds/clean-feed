@@ -6,10 +6,6 @@ import com.allsouls.newsapp.feed.data.FeedClient
 import com.allsouls.newsapp.feed.domain.FeedRepo
 import com.allsouls.newsapp.feed.domain.FetchFeed
 import com.allsouls.newsapp.feed.presentation.FeedModel
-import com.allsouls.newsapp.headline.presentation.HeadlineCardPresenter
-import com.allsouls.newsapp.headline.presentation.HeadlineCardView
-import com.allsouls.newsapp.headline.presentation.HeadlinePresenter
-import com.allsouls.newsapp.headline.presentation.HeadlineView
 import org.koin.dsl.module
 
 val feedModule = module {
@@ -17,6 +13,4 @@ val feedModule = module {
     single<FeedRepo> { FeedApi(get()) }
     single { FetchFeed(get()) }
     factory { FeedModel(get(), get()) }
-    factory { (view: HeadlineCardView) -> HeadlineCardPresenter(view) }
-    factory { (view: HeadlineView) -> HeadlinePresenter(view) }
 }
