@@ -4,11 +4,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
+import com.allsouls.newsapp.arch.presentation.formatDate
 import com.allsouls.newsapp.headline.domain.entity.Headline
 
 
@@ -17,17 +18,19 @@ fun HeadlineCard(
     headline: Headline,
     onHeadlineClick: (Headline) -> Unit = {}
 ) {
-    Card(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp, 4.dp, 8.dp, 4.dp)
             .clickable { onHeadlineClick(headline) }
     ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-        ) {
-            Text(headline.headline)
-        }
+        Text(
+            headline.headline,
+            fontStyle = FontStyle.Italic,
+            modifier = Modifier.padding(16.dp, 16.dp, 16.dp)
+        )
+        Text(
+            formatDate(headline.updated),
+            modifier = Modifier.padding(16.dp)
+        )
     }
 }
