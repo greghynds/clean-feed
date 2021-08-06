@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">News App</string>
+    <string name="feed_activity_name">Top Stories</string>
+    <string name="headline_activity">Story</string>
 </resources>

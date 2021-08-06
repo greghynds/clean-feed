@@ -13,6 +13,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".feed.FeedActivity"
+            android:label="@string/feed_activity_name"
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,6 +23,7 @@
         </activity>
         <activity
             android:name=".headline.HeadlineActivity"
+            android:label="@string/headline_activity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
     </application>
 
