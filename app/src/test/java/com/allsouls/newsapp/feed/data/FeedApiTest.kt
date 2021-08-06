@@ -10,7 +10,6 @@ import com.allsouls.newsapp.util.failureResponse
 import com.allsouls.newsapp.util.successResponse
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -30,7 +29,7 @@ class FeedApiTest {
             val response = FeedResponse(listOf(dto))
             val client = mock<FeedClient>()
             val sut = FeedApi(client)
-            whenever(client.feed()).thenReturn(successResponse(response))
+            given(client.feed()).willReturn(successResponse(response))
 
             val result = sut.feed()
 
@@ -45,14 +44,12 @@ class FeedApiTest {
             val code = 500
             val client = mock<FeedClient>()
             val sut = FeedApi(client)
+            val expected = ApiError(code, errorMsg)
             given(client.feed()).willReturn(failureResponse(errorMsg, code))
 
             val result = sut.feed()
 
-            assertThat(result.exceptionOrNull())
-                .isInstanceOf(ApiError::class.java)
-                .hasFieldOrPropertyWithValue("code", code)
-                .hasFieldOrPropertyWithValue("message", errorMsg)
+            assertThat(result.exceptionOrNull()).isEqualTo(expected)
         }
     }
 }
