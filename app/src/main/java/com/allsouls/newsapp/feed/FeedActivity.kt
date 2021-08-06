@@ -7,9 +7,9 @@ import androidx.compose.material.MaterialTheme
 import com.allsouls.newsapp.feed.presentation.FeedDelegate
 import com.allsouls.newsapp.feed.presentation.FeedModel
 import com.allsouls.newsapp.feed.presentation.createLoadFeedAction
-import com.allsouls.newsapp.feed.presentation.createSelectHeadlineAction
 import com.allsouls.newsapp.feed.ui.FeedUi
 import com.allsouls.newsapp.headline.domain.entity.Headline
+import com.allsouls.newsapp.headline.ui.HeadlineActivity
 import org.koin.android.ext.android.inject
 
 class FeedActivity : AppCompatActivity(), FeedDelegate {
@@ -29,6 +29,6 @@ class FeedActivity : AppCompatActivity(), FeedDelegate {
     }
 
     override fun onHeadlineClick(headline: Headline) {
-        model.send(createSelectHeadlineAction(headline))
+        startActivity(HeadlineActivity.intent(this, headline))
     }
 }
