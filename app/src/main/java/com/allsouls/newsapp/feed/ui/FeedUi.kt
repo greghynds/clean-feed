@@ -14,7 +14,7 @@ fun FeedUi(model: FeedModel, actions: FeedDelegate) {
 
     when {
         state.loading -> LoadingScreen()
-        state.isRenderable() -> HeadlinesList(state.headlines, actions::onHeadlineClick)
-        else -> ErrorScreen()
+        state.isRenderable() -> HeadlinesList(state.headlines, actions::selectHeadline)
+        else -> ErrorScreen(actions::refresh)
     }
 }

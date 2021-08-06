@@ -14,10 +14,8 @@ data class FeedState(
     companion object {
 
         fun empty() = FeedState()
-
         fun loading() = FeedState(loading = true)
-
-        fun error(error: Throwable?) = FeedState(error = error)
+        fun error(error: Throwable) = FeedState(error = error)
 
         fun from(feed: Feed): FeedState {
             return FeedState(headlines = feed.headlines.sortedByDescending(Headline::updated))
@@ -26,7 +24,7 @@ data class FeedState(
         fun from(result: Result<Feed>): FeedState {
             return when {
                 result.isSuccess -> from(result.getOrThrow())
-                else -> error(result.exceptionOrNull())
+                else -> error(result.exceptionOrNull() ?: UnknownError())
             }
         }
     }

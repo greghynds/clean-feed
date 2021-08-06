@@ -25,10 +25,14 @@ class FeedActivity : AppCompatActivity(), FeedDelegate {
             }
         }
 
-        model.send(createLoadFeedAction())
+        refresh()
     }
 
-    override fun onHeadlineClick(headline: Headline) {
+    override fun selectHeadline(headline: Headline) {
         startActivity(HeadlineActivity.intent(this, headline))
+    }
+
+    override fun refresh() {
+        model.send(createLoadFeedAction())
     }
 }
