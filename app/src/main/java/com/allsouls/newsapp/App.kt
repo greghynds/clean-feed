@@ -5,7 +5,6 @@ import com.allsouls.newsapp.arch.di.asyncModule
 import com.allsouls.newsapp.arch.di.networkModule
 import com.allsouls.newsapp.arch.di.serializationModule
 import com.allsouls.newsapp.feed.di.feedModule
-import com.allsouls.newsapp.tracking.di.trackingModule
 import org.koin.core.context.startKoin
 
 class App : Application() {
@@ -13,7 +12,6 @@ class App : Application() {
     private val modules = listOf(
         asyncModule,
         serializationModule,
-        trackingModule,
         networkModule,
         feedModule
     )
