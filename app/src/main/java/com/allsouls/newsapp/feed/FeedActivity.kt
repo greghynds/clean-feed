@@ -9,7 +9,7 @@ import com.allsouls.newsapp.feed.presentation.FeedModel
 import com.allsouls.newsapp.feed.presentation.createLoadFeedAction
 import com.allsouls.newsapp.feed.ui.FeedUi
 import com.allsouls.newsapp.headline.domain.entity.Headline
-import com.allsouls.newsapp.headline.ui.HeadlineActivity
+import com.allsouls.newsapp.headline.HeadlineActivity
 import org.koin.android.ext.android.inject
 
 class FeedActivity : AppCompatActivity(), FeedDelegate {

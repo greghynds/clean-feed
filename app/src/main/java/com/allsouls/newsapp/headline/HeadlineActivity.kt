@@ -1,4 +1,4 @@
-package com.allsouls.newsapp.headline.ui
+package com.allsouls.newsapp.headline
 
 import android.content.Context
 import android.content.Intent
@@ -7,8 +7,8 @@ import android.view.MenuItem
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
-import com.allsouls.newsapp.feed.ui.HeadlineCard
 import com.allsouls.newsapp.headline.domain.entity.Headline
+import com.allsouls.newsapp.headline.ui.HeadlineUi
 
 class HeadlineActivity : AppCompatActivity() {
 
@@ -18,7 +18,7 @@ class HeadlineActivity : AppCompatActivity() {
 
         setContent {
             MaterialTheme {
-                HeadlineCard(intent.getParcelableExtra(KEY_HEADLINE)!!)
+                HeadlineUi(intent.getParcelableExtra(KEY_HEADLINE))
             }
         }
     }

@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".headline.ui.HeadlineActivity"
+            android:name=".headline.HeadlineActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
     </application>
 
