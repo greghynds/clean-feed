@@ -1,14 +1,7 @@
 package com.allsouls.newsapp.feed.presentation
 
-import com.allsouls.newsapp.AppState
 import com.allsouls.newsapp.feed.domain.entity.Feed
 import xyz.gwh.redux.Reducer
-
-val rootReducer: Reducer<AppState> = { state, action ->
-    AppState(
-        feedState = feedReducer(state.feedState, action)
-    )
-}
 
 val feedReducer: Reducer<FeedState> = { state, action ->
     when {
