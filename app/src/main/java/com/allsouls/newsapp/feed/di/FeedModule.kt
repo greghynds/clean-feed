@@ -6,11 +6,12 @@ import com.allsouls.newsapp.feed.data.FeedClient
 import com.allsouls.newsapp.feed.domain.FeedRepo
 import com.allsouls.newsapp.feed.domain.FetchFeed
 import com.allsouls.newsapp.feed.presentation.FeedModel
+import com.allsouls.newsapp.feed.presentation.createFetchFeedThunk
 import org.koin.dsl.module
 
 val feedModule = module {
     single<FeedClient> { createApiClient(get()) }
     single<FeedRepo> { FeedApi(get()) }
     single { FetchFeed(get()) }
-    factory { FeedModel(get(), get()) }
+    factory { createFetchFeedThunk(get(), get()) }
 }

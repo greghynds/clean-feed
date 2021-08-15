@@ -1,38 +1,43 @@
 package com.allsouls.newsapp.feed
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
-import com.allsouls.newsapp.feed.presentation.FeedDelegate
-import com.allsouls.newsapp.feed.presentation.FeedModel
-import com.allsouls.newsapp.feed.presentation.createLoadFeedAction
+import com.allsouls.newsapp.feed.presentation.*
 import com.allsouls.newsapp.feed.ui.FeedUi
-import com.allsouls.newsapp.headline.domain.entity.Headline
 import com.allsouls.newsapp.headline.HeadlineActivity
-import org.koin.android.ext.android.inject
+import com.allsouls.newsapp.headline.domain.entity.Headline
+import org.koin.android.ext.android.get
+import xyz.gwh.redux.createStore
 
-class FeedActivity : AppCompatActivity(), FeedDelegate {
+class FeedActivity : AppCompatActivity(), FeedRouter {
 
-    private val model: FeedModel by inject()
+    private val store by lazy {
+        createStore(
+            rootReducer,
+            FeedState.empty(),
+            logging,
+            get(),
+            routing(this)
+        )
+    }
 
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             MaterialTheme {
-                FeedUi(model, this)
+                FeedUi(store)
             }
         }
 
-        refresh()
+        store.dispatch(createLoadFeedAction())
     }
 
-    override fun selectHeadline(headline: Headline) {
+    override fun navigateToHeadline(headline: Headline) {
         startActivity(HeadlineActivity.intent(this, headline))
-    }
-
-    override fun refresh() {
-        model.send(createLoadFeedAction())
     }
 }

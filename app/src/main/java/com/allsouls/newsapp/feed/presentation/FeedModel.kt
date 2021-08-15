@@ -1,10 +1,10 @@
 package com.allsouls.newsapp.feed.presentation
 
 import com.allsouls.newsapp.arch.domain.Params
-import com.allsouls.newsapp.arch.presentation.Action
 import com.allsouls.newsapp.arch.presentation.Dispatchers
 import com.allsouls.newsapp.arch.presentation.Model
 import com.allsouls.newsapp.feed.domain.FetchFeed
+import xyz.gwh.redux.Action
 
 
 class FeedModel(
@@ -14,7 +14,7 @@ class FeedModel(
 
     override fun send(action: Action) = with(action) {
         when (type) {
-            LOAD_FEED -> loadFeed()
+            LOAD_FEED -> _loadFeed()
         }
     }
 
@@ -22,7 +22,7 @@ class FeedModel(
         emit(FeedState.error(error))
     }
 
-    private fun loadFeed() {
+    private fun _loadFeed() {
         emit(FeedState.loading())
 
         main {

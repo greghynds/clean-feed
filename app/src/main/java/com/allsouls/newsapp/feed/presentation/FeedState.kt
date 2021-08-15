@@ -11,6 +11,10 @@ data class FeedState(
 
     fun isRenderable(): Boolean = !loading && error == null
 
+    override fun toString(): String {
+        return "FeedState(headlines=${headlines.size}, error=$error, loading=$loading)"
+    }
+
     companion object {
 
         fun empty() = FeedState()
