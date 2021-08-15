@@ -13,6 +13,7 @@ class App : Application() {
         asyncModule,
         serializationModule,
         networkModule,
+        appModule,
         feedModule
     )
 

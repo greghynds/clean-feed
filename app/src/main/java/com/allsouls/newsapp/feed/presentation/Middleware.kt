@@ -1,25 +1,31 @@
 package com.allsouls.newsapp.feed.presentation
 
 import android.util.Log
+import com.allsouls.newsapp.AppState
 import com.allsouls.newsapp.arch.domain.Params
 import com.allsouls.newsapp.arch.presentation.Dispatchers
+import com.allsouls.newsapp.arch.presentation.Navigator
 import com.allsouls.newsapp.arch.presentation.createThunk
 import com.allsouls.newsapp.feed.domain.FetchFeed
 import com.allsouls.newsapp.headline.domain.entity.Headline
+import com.allsouls.newsapp.headline.presentation.createHeadlineRoute
 import xyz.gwh.redux.Middleware
 
-val logging: Middleware<FeedState> = { store ->
+fun logging(): Middleware<AppState> = {
     { action ->
-        Log.d("Logger", "Dispatching action: ${action.type}")
+        Log.d("Redux", "Dispatching action: ${action.type}")
         action
     }
 }
 
-fun routing(router: FeedRouter): Middleware<FeedState> = {
+fun routing(router: Navigator): Middleware<AppState> = {
     { action ->
-        when {
-            action.isOfType(SELECT_HEADLINE) -> router.navigateToHeadline(action.payload as Headline)
+        val route = when {
+            action.isOfType(SELECT_HEADLINE) -> createHeadlineRoute(action.payload as Headline)
+            else -> null
         }
+
+        route?.let(router::navigateTo)
         action
     }
 }
@@ -27,7 +33,7 @@ fun routing(router: FeedRouter): Middleware<FeedState> = {
 fun createFetchFeedThunk(
     fetchFeed: FetchFeed,
     dispatchers: Dispatchers
-): Middleware<FeedState> {
+): Middleware<AppState> {
     return createThunk(LOAD_FEED, dispatchers) {
         fetchFeed.execute(Params.None)
             .fold(

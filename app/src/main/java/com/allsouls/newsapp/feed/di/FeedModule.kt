@@ -5,7 +5,6 @@ import com.allsouls.newsapp.feed.data.FeedApi
 import com.allsouls.newsapp.feed.data.FeedClient
 import com.allsouls.newsapp.feed.domain.FeedRepo
 import com.allsouls.newsapp.feed.domain.FetchFeed
-import com.allsouls.newsapp.feed.presentation.FeedModel
 import com.allsouls.newsapp.feed.presentation.createFetchFeedThunk
 import org.koin.dsl.module
 
