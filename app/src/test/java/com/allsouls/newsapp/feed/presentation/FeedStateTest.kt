@@ -87,27 +87,6 @@ class FeedStateTest {
         assertThat(result).isEqualTo(expected)
     }
 
-    @Test
-    fun `creates state from success result`() {
-        val headline = Headline("headline", Date(), "introduction")
-        val feed = Feed(listOf(headline))
-        val expected = FeedState(listOf(headline), null, false)
-
-        val result = FeedState.from(success(feed))
-
-        assertThat(result).isEqualTo(expected)
-    }
-
-    @Test
-    fun `creates state from failure result`() {
-        val error = UnknownError("network failure")
-        val expected = FeedState(listOf(), error, false)
-
-        val result = FeedState.from(failure(error))
-
-        assertThat(result).isEqualTo(expected)
-    }
-
     private fun createHeadline(
         title: String = "title",
         updated: Date = Date(),
