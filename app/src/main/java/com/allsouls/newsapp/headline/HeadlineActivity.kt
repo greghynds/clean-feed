@@ -1,13 +1,11 @@
 package com.allsouls.newsapp.headline
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
-import com.allsouls.newsapp.headline.domain.entity.Headline
+import com.allsouls.newsapp.headline.presentation.PARAM_HEADLINE
 import com.allsouls.newsapp.headline.ui.HeadlineUi
 
 class HeadlineActivity : AppCompatActivity() {
@@ -18,7 +16,7 @@ class HeadlineActivity : AppCompatActivity() {
 
         setContent {
             MaterialTheme {
-                HeadlineUi(intent.getParcelableExtra(KEY_HEADLINE))
+                HeadlineUi(intent.getParcelableExtra(PARAM_HEADLINE))
             }
         }
     }
@@ -31,14 +29,5 @@ class HeadlineActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    companion object {
-        private const val KEY_HEADLINE = "HEADLINE"
-
-        fun intent(context: Context, headline: Headline): Intent {
-            return Intent(context, HeadlineActivity::class.java)
-                .apply { putExtra(KEY_HEADLINE, headline) }
-        }
     }
 }
