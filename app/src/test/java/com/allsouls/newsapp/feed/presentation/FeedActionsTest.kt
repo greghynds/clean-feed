@@ -1,8 +1,8 @@
 package com.allsouls.newsapp.feed.presentation
 
-import com.allsouls.newsapp.arch.presentation.Action
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import xyz.gwh.redux.Action
 
 class FeedActionsTest {
 
