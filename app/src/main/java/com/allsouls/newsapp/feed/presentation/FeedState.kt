@@ -12,13 +12,9 @@ data class FeedState(
     fun isRenderable(): Boolean = !loading && error == null
 
     companion object {
-
         fun empty() = FeedState()
         fun loading() = FeedState(loading = true)
         fun error(error: Throwable) = FeedState(error = error)
-
-        fun from(feed: Feed): FeedState {
-            return FeedState(headlines = feed.headlines.sortedByDescending(Headline::updated))
-        }
+        fun from(feed: Feed) = FeedState(headlines = feed.headlines.sortedByDescending(Headline::updated))
     }
 }

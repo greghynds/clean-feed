@@ -5,7 +5,7 @@ import com.allsouls.newsapp.AppState
 import xyz.gwh.redux.Middleware
 
 
-fun logging(): Middleware<AppState> = {
+fun createLoggingMiddleware(): Middleware<AppState> = {
     { action ->
         Log.d("Redux", "Dispatching action: ${action.type}")
         action

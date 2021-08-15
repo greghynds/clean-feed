@@ -11,7 +11,7 @@ import com.allsouls.newsapp.headline.presentation.createHeadlineRoute
 import xyz.gwh.redux.Middleware
 
 
-fun routing(router: Navigator): Middleware<AppState> = {
+fun createRoutingMiddleware(router: Navigator): Middleware<AppState> = {
     { action ->
         val route = when {
             action.isOfType(SELECT_HEADLINE) -> createHeadlineRoute(action.payload as Headline)
