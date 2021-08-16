@@ -1,11 +1,11 @@
-## News App
-- The app fetches a list of news headlines and presents them in a feed
+## News App Playground
+- Fetches a list of news headlines and presents them in a feed
 - Clicking on a headline will open up a detail page
 - Basic error/retry handling is in place
 - The headlines are hosted on GitHub as static JSON responses
 
 ### App architecture
-- The project follows a clean architecture approach for structuring the code
+- Clean architecture approach for structuring the code
 - Features are separated into packages
     - `domain` (business logic)
     - `data` (I/O operations)
@@ -29,9 +29,3 @@
 - Mockito for mocking test dependencies
 - AssertJ for unit test assertions
 - approvals-java for text-based approval tests
-
-###  Todo
-- The build script could be improved. First steps might be to extract version numbers into properties, create files for different sections (e.g. dependencies). 
-- The UI is very basic and the components themselves could be separated into smaller slices
-- No integration or e2e tests - it would make sense to use the dedicated testing API for Jetpack Compose
-- A caching or offline feature might be a nice bonus. In a simple case, the content could be written to disk as raw JSON files
