@@ -1,7 +1,7 @@
 package com.allsouls.newsapp.arch.di
 
-import com.allsouls.newsapp.arch.presentation.AndroidDispatchers
-import com.allsouls.newsapp.arch.presentation.Dispatchers
+import com.allsouls.newsapp.arch.async.AndroidDispatchers
+import com.allsouls.newsapp.arch.async.Dispatchers
 import org.koin.dsl.module
 
 val asyncModule = module {

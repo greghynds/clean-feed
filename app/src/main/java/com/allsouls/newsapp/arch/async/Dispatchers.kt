@@ -1,4 +1,4 @@
-package com.allsouls.newsapp.arch.presentation
+package com.allsouls.newsapp.arch.async
 
 import kotlinx.coroutines.CoroutineDispatcher
 
