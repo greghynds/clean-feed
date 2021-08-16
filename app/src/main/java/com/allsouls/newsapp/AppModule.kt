@@ -8,13 +8,13 @@ import org.koin.dsl.module
 import xyz.gwh.redux.createStore
 
 val appModule = module {
-    single { (router: Navigator) ->
+    single { (navigator: Navigator) ->
         createStore(
             rootReducer,
             AppState.INITIAL,
             createLoggingMiddleware(),
-            createFetchFeedThunk(get(), get()),
-            createRoutingMiddleware(router)
+            createRoutingMiddleware(navigator),
+            createFetchFeedThunk(get(), get())
         )
     }
 }
