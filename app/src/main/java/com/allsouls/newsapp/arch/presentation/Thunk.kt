@@ -4,9 +4,9 @@ import com.allsouls.newsapp.arch.async.Dispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import xyz.gwh.redux.Action
-import xyz.gwh.redux.Middleware
-import xyz.gwh.redux.Store
+import com.github.greghynds.redux.Action
+import com.github.greghynds.redux.Middleware
+import com.github.greghynds.redux.Store
 
 
 fun <State> createThunk(

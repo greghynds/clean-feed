@@ -1,7 +1,7 @@
 package com.allsouls.newsapp
 
 import com.allsouls.newsapp.feed.presentation.feedReducer
-import xyz.gwh.redux.Reducer
+import com.github.greghynds.redux.Reducer
 
 val rootReducer: Reducer<AppState> = { state, action ->
     AppState(

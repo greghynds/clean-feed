@@ -2,7 +2,7 @@ package com.allsouls.newsapp.feed.presentation
 
 import com.allsouls.newsapp.feed.domain.entity.Feed
 import com.allsouls.newsapp.headline.domain.entity.Headline
-import xyz.gwh.redux.Action
+import com.github.greghynds.redux.Action
 
 const val LOAD_FEED = "LOAD_FEED"
 const val LOAD_FEED_SUCCESS = "LOAD_FEED_SUCCESS"

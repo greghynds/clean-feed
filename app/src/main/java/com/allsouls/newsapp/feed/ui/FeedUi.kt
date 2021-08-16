@@ -7,8 +7,8 @@ import com.allsouls.newsapp.AppState
 import com.allsouls.newsapp.feed.presentation.FeedState
 import com.allsouls.newsapp.feed.presentation.createLoadFeedAction
 import com.allsouls.newsapp.feed.presentation.createSelectHeadlineAction
-import xyz.gwh.redux.Store
-import xyz.gwh.redux.select
+import com.github.greghynds.redux.Store
+import com.github.greghynds.redux.select
 
 
 @Composable

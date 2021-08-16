@@ -12,7 +12,7 @@ import com.gwh.routes.Route
 import com.gwh.routes.startActivity
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
-import xyz.gwh.redux.Store
+import com.github.greghynds.redux.Store
 
 class FeedActivity : AppCompatActivity(), Navigator {
 

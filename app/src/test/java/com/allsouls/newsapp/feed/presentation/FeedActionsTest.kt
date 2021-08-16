@@ -5,7 +5,7 @@ import com.allsouls.newsapp.feed.domain.entity.Feed
 import com.allsouls.newsapp.headline.domain.entity.Headline
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import xyz.gwh.redux.Action
+import com.github.greghynds.redux.Action
 import java.util.*
 
 class FeedActionsTest {

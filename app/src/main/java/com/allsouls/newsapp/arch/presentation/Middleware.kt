@@ -2,7 +2,7 @@ package com.allsouls.newsapp.arch.presentation
 
 import android.util.Log
 import com.allsouls.newsapp.AppState
-import xyz.gwh.redux.Middleware
+import com.github.greghynds.redux.Middleware
 
 
 fun createLoggingMiddleware(): Middleware<AppState> = {

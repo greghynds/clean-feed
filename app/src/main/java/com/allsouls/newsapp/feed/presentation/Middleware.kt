@@ -8,7 +8,7 @@ import com.allsouls.newsapp.arch.presentation.createThunk
 import com.allsouls.newsapp.feed.domain.FetchFeed
 import com.allsouls.newsapp.headline.domain.entity.Headline
 import com.allsouls.newsapp.headline.presentation.createHeadlineRoute
-import xyz.gwh.redux.Middleware
+import com.github.greghynds.redux.Middleware
 
 
 fun createRoutingMiddleware(router: Navigator): Middleware<AppState> = {
